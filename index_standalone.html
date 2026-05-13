@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPS 셀프사진관 — 대전 셀프스튜디오</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: #0e0d0c; font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; -webkit-font-smoothing: antialiased; word-break: keep-all; text-wrap: pretty; color: #F9F7F5; overflow-x: hidden; }
+* { scrollbar-width: thin; scrollbar-color: #2a2724 transparent; }
+a { text-decoration: none; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 24px rgba(255,61,139,0.35); } 50% { box-shadow: 0 0 48px rgba(255,61,139,0.65); } }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes splitFlapIn { 0% { transform: rotateX(90deg); opacity:0.3; } 100% { transform: rotateX(0deg); opacity:1; } }
+@keyframes splitFlapOut { 0% { transform: rotateX(0deg); opacity:1; } 100% { transform: rotateX(-90deg); opacity:0.2; } }
+.fade-1 { animation: fadeUp 0.9s 0.1s cubic-bezier(0.16,1,0.3,1) both; }
+.fade-2 { animation: fadeUp 0.9s 0.28s cubic-bezier(0.16,1,0.3,1) both; }
+.fade-3 { animation: fadeUp 0.9s 0.44s cubic-bezier(0.16,1,0.3,1) both; }
+.fade-4 { animation: fadeUp 0.9s 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+// PPS 셀프사진관 — Extended Shared Components
+
+const { useState, useEffect, useRef } = React;
+
+// ── Logo ─────────────────────────────────────────────────────
+window.Logo = function Logo({ dark = false, size = 'md' }) {
+  const sz = size === 'lg' ? 24 : 18;
+  const dot = size === 'lg' ? 9 : 7;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ width: dot, height: dot, borderRadius: '50%', background: '#FF3D8B', boxShadow: '0 0 8px rgba(255,61,139,0.5)' }} />
+      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: sz, fontWeight: 300, letterSpacing: '-0.04em', color: dark ? '#fff' : '#1A1714' }}>PPS</span>
+      <span style={{ fontFamily: "'Pretendard', sans-serif", fontSize: sz - 5, fontWeight: 300, color: dark ? 'rgba(255,255,255,0.45)' : '#9A9590', marginLeft: 1 }}>셀프사진관</span>
+    </div>
+  );
+};
+
+// ── Nav ──────────────────────────────────────────────────────
+window.Nav = function Nav({ activePage, setPage }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const links = [
+    { label: '포트폴리오', key: 'portfolio' },
+    { label: '가격안내', key: 'pricing' },
+    { label: '이용방법', key: 'guide' },
+    { label: 'FAQ', key: 'faq' },
+    { label: '오시는 길', key: 'location' },
+  ];
+
+  const isDark = activePage === 'home' && !scrolled;
+
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
+      background: scrolled ? 'rgba(26,23,20,0.95)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(16px)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none',
+      height: 64, display: 'flex', alignItems: 'center',
+      justifyContent: 'space-between', padding: '0 48px',
+      transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+    }}>
+      <div style={{ cursor: 'pointer' }} onClick={() => setPage('home')}>
+        <Logo dark size="md" />
+      </div>
+      <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
+        {links.map(l => (
+          <span key={l.key} onClick={() => setPage(l.key)} style={{
+            fontFamily: "'Pretendard', sans-serif",
+            fontSize: 13, fontWeight: activePage === l.key ? 600 : 400,
+            color: activePage === l.key ? '#FF3D8B' : 'rgba(255,255,255,0.75)',
+            cursor: 'pointer', transition: 'color 0.2s', letterSpacing: '0.01em',
+          }}>{l.label}</span>
+        ))}
+        <button onClick={() => window.open('https://naver.me/IMyGdHlr', '_blank')} style={{
+          background: '#FF3D8B', color: '#fff', border: 'none',
+          borderRadius: 9999, padding: '9px 24px',
+          fontFamily: "'Pretendard', sans-serif", fontSize: 13, fontWeight: 600,
+          cursor: 'pointer', boxShadow: '0 0 20px rgba(255,61,139,0.4)',
+          transition: 'all 0.2s', letterSpacing: '0.02em',
+        }}>예약하기</button>
+      </div>
+    </nav>
+  );
+};
+
+// ── Badge / Label ────────────────────────────────────────────
+window.Badge = function Badge({ children, color = 'pink' }) {
+  const styles = {
+    pink:  { background: 'rgba(255,61,139,0.12)', color: '#FF3D8B' },
+    blue:  { background: 'rgba(0,191,255,0.12)', color: '#00BFFF' },
+    white: { background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' },
+    dark:  { background: '#1A1714', color: '#fff' },
+    gray:  { background: '#F0EDE9', color: '#6A6560' },
+  };
+  return (
+    <span style={{
+      ...styles[color],
+      display: 'inline-flex', alignItems: 'center',
+      fontFamily: "'DM Sans', sans-serif",
+      fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
+      textTransform: 'uppercase', borderRadius: 9999,
+      padding: '4px 12px',
+    }}>{children}</span>
+  );
+};
+
+// ── Eyebrow Label ────────────────────────────────────────────
+window.Eyebrow = function Eyebrow({ children, light = false }) {
+  return (
+    <div style={{
+      fontFamily: "'DM Sans', sans-serif",
+      fontSize: 10, fontWeight: 600, letterSpacing: '0.16em',
+      textTransform: 'uppercase',
+      color: light ? 'rgba(255,255,255,0.4)' : '#FF3D8B',
+      marginBottom: 12,
+    }}>{children}</div>
+  );
+};
+
+// ── Button ───────────────────────────────────────────────────
+window.Btn = function Btn({ children, variant = 'primary', onClick, size = 'md', href }) {
+  const [hover, setHover] = useState(false);
+  const sizes = { sm: '8px 20px', md: '12px 32px', lg: '16px 48px' };
+  const fontSizes = { sm: 12, md: 14, lg: 15 };
+  const variants = {
+    cta: {
+      background: hover ? '#E8006D' : '#FF3D8B', color: '#fff',
+      boxShadow: hover ? '0 0 32px rgba(255,61,139,0.6)' : '0 0 20px rgba(255,61,139,0.4)',
+      border: 'none',
+    },
+    primary: {
+      background: hover ? 'rgba(255,255,255,0.15)' : 'transparent',
+      color: '#fff', border: '1px solid rgba(255,255,255,0.3)',
+      boxShadow: 'none',
+    },
+    secondary: {
+      background: hover ? '#F0EDE9' : '#fff', color: '#1A1714',
+      border: '1px solid #E8E4E0', boxShadow: 'none',
+    },
+    ghost: {
+      background: 'transparent', color: 'rgba(255,255,255,0.6)',
+      border: 'none', boxShadow: 'none',
+    },
+    dark: {
+      background: hover ? '#2A2724' : '#1A1714', color: '#fff',
+      border: 'none', boxShadow: 'none',
+    },
+  };
+  const v = variants[variant] || variants.cta;
+  const handleClick = href ? () => window.open(href, '_blank') : onClick;
+  return (
+    <button
+      onClick={handleClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        ...v,
+        borderRadius: 9999, padding: sizes[size],
+        fontFamily: "'Pretendard', sans-serif",
+        fontSize: fontSizes[size], fontWeight: 600,
+        cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+        transform: hover ? 'translateY(-2px)' : 'none',
+        letterSpacing: '0.02em',
+      }}
+    >{children}</button>
+  );
+};
+
+// ── Photo Placeholder ─────────────────────────────────────────
+window.PhotoPlaceholder = function PhotoPlaceholder({ w, h, label, style = {} }) {
+  return (
+    <div style={{
+      width: w || '100%', height: h || 300,
+      background: 'linear-gradient(160deg, #1e1c1a 0%, #2a2724 50%, #1a1714 100%)',
+      borderRadius: 4,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      color: 'rgba(255,255,255,0.12)', fontSize: 11, letterSpacing: '0.1em',
+      border: '1px solid rgba(255,255,255,0.05)',
+      ...style,
+    }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" style={{ marginBottom: 8 }}>
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      {label && <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, letterSpacing: '0.08em' }}>{label}</span>}
+    </div>
+  );
+};
+
+// ── Footer ───────────────────────────────────────────────────
+window.Footer = function Footer({ setPage }) {
+  const links = [
+    { label: '포트폴리오', key: 'portfolio' },
+    { label: '가격안내', key: 'pricing' },
+    { label: '이용방법', key: 'guide' },
+    { label: 'FAQ', key: 'faq' },
+    { label: '오시는 길', key: 'location' },
+  ];
+  return (
+    <footer style={{ background: '#111', borderTop: '1px solid rgba(255,255,255,0.06)', padding: '64px 48px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
+          <div>
+            <Logo dark size="md" />
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 16, lineHeight: 1.9, fontFamily: "'Pretendard', sans-serif" }}>
+              사진가와 마주하는 부담 없이<br />편안하게 촬영하시고,<br />완성도 높은 사진만 남기세요.
+            </p>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginBottom: 20 }}>MENU</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {links.map(l => (
+                <span key={l.key} onClick={() => setPage && setPage(l.key)} style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: "'Pretendard',sans-serif", transition: 'color 0.2s' }}>{l.label}</span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginBottom: 20 }}>CONTACT</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontFamily: "'Pretendard',sans-serif" }}>Instagram @pps_studio_</a>
+              <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontFamily: "'Pretendard',sans-serif" }}>카카오채널 상담</a>
+              <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', fontFamily: "'Pretendard',sans-serif" }}>네이버 예약</a>
+            </div>
+            <div style={{ marginTop: 20, fontSize: 12, color: 'rgba(255,255,255,0.25)', lineHeight: 1.8, fontFamily: "'Pretendard',sans-serif" }}>
+              대전광역시 중구 대전천서로 475<br />중앙타워빌딩 8층<br />운영시간 10:00 – 21:00
+            </div>
+          </div>
+        </div>
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '0 0 24px' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', fontFamily: "'DM Sans',sans-serif" }}>© 2025 PPS 셀프사진관. All rights reserved.</div>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ color: 'rgba(255,255,255,0.2)', textDecoration: 'none', fontSize: 11, fontFamily: "'DM Sans',sans-serif" }}>Instagram</a>
+            <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ color: 'rgba(255,255,255,0.2)', textDecoration: 'none', fontSize: 11, fontFamily: "'DM Sans',sans-serif" }}>Kakao</a>
+            <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ color: 'rgba(255,255,255,0.2)', textDecoration: 'none', fontSize: 11, fontFamily: "'DM Sans',sans-serif" }}>Naver</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// ── Floating Contact Bar ──────────────────────────────────────
+window.FloatingContact = function FloatingContact() {
+  const [hover, setHover] = useState(null);
+  const btns = [
+    { label: '네이버 예약', color: '#03C75A', href: 'https://naver.me/IMyGdHlr', icon: 'N' },
+    { label: '카카오 상담', color: '#FEE500', textColor: '#1A1714', href: 'http://pf.kakao.com/_xgxeIMxj/chat', icon: 'K' },
+    { label: 'Instagram', color: '#E1306C', href: 'https://www.instagram.com/pps_studio_/', icon: '◎' },
+  ];
+  return (
+    <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 300, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {btns.map((b, i) => (
+        <a key={i} href={b.href} target="_blank"
+          onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: b.color, color: b.textColor || '#fff',
+            borderRadius: 9999, padding: hover === i ? '10px 20px' : '10px 12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            textDecoration: 'none', transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+            overflow: 'hidden', whiteSpace: 'nowrap',
+          }}>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 700, minWidth: 16, textAlign: 'center' }}>{b.icon}</span>
+          <span style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 12, fontWeight: 600, maxWidth: hover === i ? 80 : 0, overflow: 'hidden', transition: 'max-width 0.25s' }}>{b.label}</span>
+        </a>
+      ))}
+    </div>
+  );
+};
+
+// ── Fade-in Hook ─────────────────────────────────────────────
+window.useFadeIn = function useFadeIn() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, visible };
+};
+
+window.FadeIn = function FadeIn({ children, delay = 0, style = {} }) {
+  const { ref, visible } = useFadeIn();
+  return (
+    <div ref={ref} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(24px)',
+      transition: `opacity 0.7s ${delay}s cubic-bezier(0.16,1,0.3,1), transform 0.7s ${delay}s cubic-bezier(0.16,1,0.3,1)`,
+      ...style,
+    }}>{children}</div>
+  );
+};
+
+Object.assign(window, { Logo, Nav, Badge, Eyebrow, Btn, PhotoPlaceholder, Footer, FloatingContact, useFadeIn, FadeIn });
+
+</script>
+<script type="text/babel">
+// PPS 셀프사진관 — Price Calculator Component
+
+function PriceCalculator() {
+  const { useState } = React;
+  const [count, setCount] = useState(2);
+  const [withPhotographer, setWithPhotographer] = useState(false);
+
+  // 정확한 요금 계산
+  // 기본: 2인 60,000원
+  // 3~5인: 1인 추가당 +15,000원
+  // 6인~: 1인 추가당 +10,000원
+  // 작가 촬영 옵션: +50,000원 (별도)
+  const calcBase = (n) => {
+    // 최소 2인부터 — 1인 ID는 별도 상품
+    if (n === 2) return 60000;
+    if (n <= 5) return 60000 + (n - 2) * 15000;
+    return 60000 + 3 * 15000 + (n - 5) * 10000;
+  };
+
+  const PHOTOGRAPHER_FEE = 50000;
+
+  const base = calcBase(count);
+  const photographerFee = withPhotographer ? PHOTOGRAPHER_FEE : 0;
+  const total = base + photographerFee;
+  const perPerson = Math.round(total / count);
+
+  const getPkgLabel = (n) => {
+    // 1인 ID는 별도 상품이라 계산기에서는 다루지 않음 (최소 2인 시작)
+    if (n <= 5) return { tag:'기본 촬영', color:'#FF3D8B', name:'기본 촬영 패키지', desc:'셀프 촬영 + 전문 보정' };
+    return { tag:'단체 촬영', color:'#7BB8E8', name:'단체 촬영 패키지', desc:'6인 이상 단체 무제한 셀프 촬영' };
+  };
+
+  const getTip = (n) => {
+    
+    if (n === 2) return '2인 기본 요금 60,000원! 다양한 포즈와 컨셉으로 자유롭게 촬영해보세요.';
+    if (n <= 5) return n + '인 기준 1인당 ' + Math.round(calcBase(n)/n).toLocaleString() + '원이에요. 친구끼리 오면 더 합리적!';
+    if (n < 20) return '6인 이상은 1인 추가당 10,000원! 인원이 많을수록 1인당 부담이 줄어요.';
+    return '20명 이상 대규모 단체는 지하 1층 대형호리존 이용 가능! 카카오채널로 사전 문의해 주세요.';
+  };
+
+  const pkg = getPkgLabel(count);
+
+  return (
+    <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 80px 48px' }}>
+      <div style={{
+        background:'linear-gradient(135deg,rgba(255,61,139,0.08) 0%,rgba(0,191,255,0.05) 100%)',
+        border:'1px solid rgba(255,61,139,0.2)', borderRadius:24, padding:'48px 48px',
+        position:'relative', overflow:'hidden',
+      }}>
+        <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'rgba(255,61,139,0.07)', filter:'blur(60px)', pointerEvents:'none' }} />
+
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:48, alignItems:'center', position:'relative' }}>
+
+          {/* ── LEFT: input ── */}
+          <div>
+            <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20 }}>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:'#FF3D8B', boxShadow:'0 0 10px rgba(255,61,139,0.5)' }} />
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(255,255,255,0.4)' }}>PRICE CALCULATOR</span>
+            </div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:'clamp(28px,3vw,40px)', color:'#F9F7F5', letterSpacing:'-0.04em', lineHeight:1.1, marginBottom:8 }}>
+              몇 명이 오세요?
+            </div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.35)', marginBottom:32 }}>
+              인원수를 입력하면 맞는 패키지와 예상 금액을 바로 알려드려요
+            </div>
+
+            {/* +/- stepper */}
+            <div style={{ display:'flex', alignItems:'center', marginBottom:24 }}>
+              <button onClick={() => setCount(Math.max(2, count - 1))} style={{ width:52, height:52, borderRadius:'12px 0 0 12px', background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', color:'#F9F7F5', fontSize:22, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>−</button>
+              <input type="number" min="2" max="100" value={count}
+                onChange={e => setCount(Math.max(2, Math.min(100, parseInt(e.target.value) || 2)))}
+                style={{ flex:1, height:52, textAlign:'center', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)', borderLeft:'none', borderRight:'none', outline:'none', fontFamily:"'DM Sans',sans-serif", fontSize:28, fontWeight:600, color:'#F9F7F5' }} />
+              <div style={{ height:52, padding:'0 14px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderLeft:'none', borderRight:'none', display:'flex', alignItems:'center' }}>
+                <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.3)' }}>명</span>
+              </div>
+              <button onClick={() => setCount(Math.min(100, count + 1))} style={{ width:52, height:52, borderRadius:'0 12px 12px 0', background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', color:'#F9F7F5', fontSize:22, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>+</button>
+            </div>
+
+            {/* Quick presets */}
+            <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:28 }}>
+              {[2,3,4,5,6,10,15,20,30].map(n => (
+                <button key={n} onClick={() => setCount(n)} style={{
+                  padding:'6px 14px', borderRadius:9999,
+                  fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:600, cursor:'pointer', transition:'all 0.15s',
+                  background: count === n ? '#FF3D8B' : 'rgba(255,255,255,0.06)',
+                  color: count === n ? '#fff' : 'rgba(255,255,255,0.45)',
+                  border: count === n ? '1px solid transparent' : '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: count === n ? '0 0 12px rgba(255,61,139,0.4)' : 'none',
+                }}>{n}명</button>
+              ))}
+            </div>
+
+            {/* 작가 촬영 옵션 */}
+            <div
+              onClick={() => setWithPhotographer(!withPhotographer)}
+              style={{
+                display:'flex', alignItems:'center', justifyContent:'space-between',
+                padding:'16px 20px', borderRadius:14, cursor:'pointer',
+                background: withPhotographer ? 'rgba(255,61,139,0.12)' : 'rgba(255,255,255,0.04)',
+                border: withPhotographer ? '1px solid rgba(255,61,139,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                transition:'all 0.2s',
+              }}>
+              <div>
+                <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3 }}>
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color: withPhotographer ? '#FF3D8B' : 'rgba(255,255,255,0.3)' }}>ADD-ON</span>
+                </div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:15, fontWeight:700, color:'#F9F7F5', marginBottom:2 }}>작가 촬영 옵션</div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.4)' }}>혼자 찍기 어색한 분들을 위한 전담 작가 촬영 +50,000원</div>
+              </div>
+              <div style={{
+                width:28, height:28, borderRadius:'50%', flexShrink:0,
+                background: withPhotographer ? '#FF3D8B' : 'rgba(255,255,255,0.1)',
+                border: withPhotographer ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:14, color:'#fff', transition:'all 0.2s',
+                boxShadow: withPhotographer ? '0 0 12px rgba(255,61,139,0.5)' : 'none',
+              }}>{withPhotographer ? '✓' : '+'}</div>
+            </div>
+          </div>
+
+          {/* ── RIGHT: result ── */}
+          <div style={{ background:'rgba(0,0,0,0.3)', borderRadius:20, padding:'32px 36px', border:'1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(255,255,255,0.06)', borderRadius:9999, padding:'5px 14px', marginBottom:20 }}>
+              <div style={{ width:6, height:6, borderRadius:'50%', background:pkg.color }} />
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:pkg.color }}>{pkg.tag}</span>
+            </div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:18, fontWeight:800, color:'#F9F7F5', marginBottom:4, letterSpacing:'-0.02em' }}>{pkg.name}</div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:28 }}>{pkg.desc}</div>
+
+            {/* Price breakdown */}
+            <div style={{ borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:20, marginBottom:20 }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:16 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.45)' }}>
+                  <span>기본 요금 ({count}인)</span>
+                  <span>{base.toLocaleString()}원</span>
+                </div>
+                {withPhotographer && (
+                  <div style={{ display:'flex', justifyContent:'space-between', fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'#FF3D8B' }}>
+                    <span>작가 촬영 옵션</span>
+                    <span>+{PHOTOGRAPHER_FEE.toLocaleString()}원</span>
+                  </div>
+                )}
+                <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'4px 0' }} />
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline' }}>
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)' }}>총 금액</span>
+                  <div style={{ display:'flex', alignItems:'baseline', gap:2 }}>
+                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:42, fontWeight:300, color:'#F9F7F5', letterSpacing:'-0.05em', lineHeight:1 }}>{total.toLocaleString()}</span>
+                    <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.4)' }}>원</span>
+                  </div>
+                </div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.3)', textAlign:'right' }}>
+                  {'1인당 약 '}<strong style={{ color:pkg.color }}>{perPerson.toLocaleString()}원</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* 2인 프라이빗 패키지 추천 배너 */}
+            {count === 2 && (
+              <div style={{ background:'linear-gradient(135deg,rgba(244,167,192,0.15) 0%,rgba(255,61,139,0.08) 100%)', border:'1px solid rgba(244,167,192,0.35)', borderRadius:12, padding:'14px 16px', marginBottom:16 }}>
+                <div style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
+                  <span style={{ fontSize:18, flexShrink:0 }}>💡</span>
+                  <div>
+                    <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, fontWeight:800, color:'#F4A7C0', marginBottom:4, letterSpacing:'-0.01em' }}>프라이빗 패키지 추천!</div>
+                    <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.6)', lineHeight:1.7 }}>
+                      2컨셉 각각 촬영 시 <strong style={{ color:'rgba(255,255,255,0.85)', textDecoration:'line-through' }}>120,000원</strong>이지만<br/>
+                      프라이빗 패키지로 선택하면 <strong style={{ color:'#FF3D8B' }}>100,000원</strong> — <strong style={{ color:'#FFD050' }}>20,000원 절약</strong> + 보정 1컷 추가!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tip */}
+            <div style={{ background:'rgba(255,255,255,0.04)', borderRadius:10, padding:'12px 16px', marginBottom:20, borderLeft:'3px solid ' + pkg.color }}>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.55)', lineHeight:1.7 }}>{getTip(count)}</div>
+            </div>
+
+            {/* CTA */}
+            <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'#FF3D8B', color:'#fff', borderRadius:12, padding:'14px 20px', fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, textDecoration:'none', boxShadow:'0 0 20px rgba(255,61,139,0.35)' }}>
+              <span>지금 예약하기</span>
+              <span style={{ fontSize:18 }}>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { PriceCalculator });
+
+</script>
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+/* ═══════════════════════════════════════════════════════════════
+   FLIP BOARD — Authentic Solari split-flap (single ticker line)
+═══════════════════════════════════════════════════════════════ */
+const DRUM = '  ABCDEFGHIJKLMNOPRSTUVWXYZ0123456789·:/-';
+
+function FlipTile({ ch }) {
+  const [top, setTop] = useState(ch);
+  const [bottom, setBottom] = useState(ch);
+  const [stage, setStage] = useState('idle');
+  const [incoming, setIncoming] = useState(ch);
+  const scheduled = useRef(null);
+  const bottomRef = useRef(ch);
+
+  useEffect(() => {
+    if (ch === bottomRef.current) return;
+    bottomRef.current = ch;
+    clearTimeout(scheduled.current);
+    setIncoming(ch);
+    setStage('fold-out');
+    scheduled.current = setTimeout(() => {
+      setBottom(ch);
+      setStage('fold-in');
+      scheduled.current = setTimeout(() => {
+        setTop(ch);
+        setStage('idle');
+      }, 200);
+    }, 200);
+    return () => clearTimeout(scheduled.current);
+  }, [ch]);
+
+  const isSpace = ch === ' ';
+  const tileW = isSpace ? 6 : 14;
+  const cardBg = '#141210';
+  const cardBgActive = '#1e1b17';
+
+  return (
+    <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'middle', margin: '0 1px', perspective: '300px' }}>
+      <span style={{ display: 'inline-flex', alignItems: 'flex-end', justifyContent: 'center', width: tileW, height: '0.58em', paddingBottom: 1, background: stage !== 'idle' ? cardBgActive : cardBg, borderRadius: '2px 2px 0 0', transformOrigin: '50% 100%', transform: stage === 'fold-out' ? 'rotateX(90deg)' : 'rotateX(0deg)', transition: stage === 'fold-out' ? 'transform 0.18s ease-in' : 'none', overflow: 'hidden' }}>
+        <span style={{ color: stage === 'fold-in' ? '#FFD050' : '#D4BE80', transform: 'translateY(50%)', fontFamily: "'DM Sans',monospace", fontSize: 'inherit', fontWeight: 'inherit', textAlign: 'center', lineHeight: 1, userSelect: 'none' }}>
+          {stage === 'fold-in' ? incoming : top}
+        </span>
+      </span>
+      <span style={{ display: 'block', width: tileW, height: 1, background: 'rgba(0,0,0,0.8)', flexShrink: 0 }} />
+      <span style={{ display: 'inline-flex', alignItems: 'flex-start', justifyContent: 'center', width: tileW, height: '0.58em', paddingTop: 1, background: cardBg, borderRadius: '0 0 2px 2px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4)', overflow: 'hidden' }}>
+        <span style={{ color: '#B8A870', transform: 'translateY(-50%)', fontFamily: "'DM Sans',monospace", fontSize: 'inherit', fontWeight: 'inherit', textAlign: 'center', lineHeight: 1, userSelect: 'none' }}>
+          {bottom}
+        </span>
+      </span>
+    </span>);
+
+}
+
+function FlipLine({ text }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', flexWrap: 'nowrap' }}>
+      {text.split('').map((ch, i) => <FlipTile key={i} ch={(ch || ' ').toUpperCase()} />)}
+    </span>);
+
+}
+
+function FlipBoard() {
+  const messages = [
+  'PPS 셀프사진관  ·  OPEN  ·  10:00 - 21:00',
+  '광고·패션 포토그래퍼 보정  ·  INCLUDED  ·  전 패키지 포함',
+  '48H 결과물 납품  ·  ON TIME  ·  영업일 기준',
+  '증명사진 · ID  ·  AVAILABLE  ·  당일 수령 가능',
+  '커플 · 가족  ·  AVAILABLE  ·  사전 예약 필요',
+  '대전광역시 중구  ·  중앙타워빌딩 8층  ·  네이버 예약'];
+
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIdx((i) => (i + 1) % messages.length), 4000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div style={{ background: '#0c0b09', borderTop: '1px solid rgba(255,200,80,0.12)', borderBottom: '1px solid rgba(255,200,80,0.07)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center' }}>
+        <div style={{ padding: '16px 20px', background: 'rgba(255,200,80,0.07)', borderRight: '1px solid rgba(255,200,80,0.12)', flexShrink: 0 }}>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,200,80,0.4)' }}>BOARD</span>
+        </div>
+        <div style={{ padding: '12px 28px', flex: 1, overflow: 'hidden', fontSize: 14, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.2 }}>
+          <FlipLine text={messages[idx]} />
+        </div>
+        <div style={{ padding: '16px 24px', display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+          {messages.map((_, i) =>
+          <div key={i} style={{ width: i === idx ? 16 : 5, height: 5, borderRadius: 9999, background: i === idx ? '#FFD050' : 'rgba(255,200,80,0.18)', transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)' }} />
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: HOME
+═══════════════════════════════════════════════════════════════ */
+function HomePage({ setPage }) {
+  return (
+    <div>
+      {/* ── HERO ── */}
+      <section style={{
+        minHeight: '100vh', display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', alignItems: 'flex-start',
+        padding: '120px 80px 80px',
+        background: '#0e0d0c',
+        position: 'relative', overflow: 'hidden'
+      }}>
+        {/* ── BG VIDEO ── swap src to your real video file when ready */}
+        <video
+          autoPlay muted loop playsInline
+          onError={(e) => e.target.style.display = 'none'}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.28, zIndex: 0 }}
+          src="assets/hero_bg.mp4" />
+        
+        {/* Gradient overlay on top of video */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(14,13,12,0.85) 40%, rgba(14,13,12,0.3) 100%), linear-gradient(to top, rgba(14,13,12,0.6) 0%, transparent 50%)', zIndex: 1, pointerEvents: 'none' }} />
+        {/* Grid texture */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px)', backgroundSize: '80px 80px', pointerEvents: 'none', zIndex: 1 }} />
+
+        {/* Right accent photo block — hidden when video plays */}
+        <div style={{ position: 'absolute', right: 80, top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: 16, opacity: 0.5, zIndex: 2 }} className="fade-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 48 }}>
+            <PhotoPlaceholder h={200} w={160} label="PORTRAIT" style={{ borderRadius: 12 }} />
+            <PhotoPlaceholder h={260} w={160} label="ID" style={{ borderRadius: 12 }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <PhotoPlaceholder h={260} w={160} label="COUPLE" style={{ borderRadius: 12 }} />
+            <PhotoPlaceholder h={200} w={160} label="FAMILY" style={{ borderRadius: 12 }} />
+          </div>
+        </div>
+        <div style={{ maxWidth: 620, position: 'relative', zIndex: 2 }}>
+          <div className="fade-1">
+            <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#FF3D8B', display: 'inline-block', marginBottom: 20 }}>PPS 셀프사진관 · DAEJEON</span>
+          </div>
+          <h1 className="fade-2" style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 'clamp(44px,5.5vw,80px)', fontWeight: 900, lineHeight: 1.0, letterSpacing: '-0.05em', color: '#F9F7F5', marginBottom: 28, textTransform: 'uppercase' }}>
+            부담 없이,<br />
+            <span style={{ color: '#FF3D8B' }}>나만의 사진</span>을<br />
+            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.5)', color: 'transparent' }}>완성하세요</span>
+          </h1>
+          <p className="fade-3" style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.9, marginBottom: 40, maxWidth: 460, fontFamily: "'Pretendard',sans-serif" }}>
+            사진가와 마주하는 부담 없이 편안하게 촬영하시고,<br />
+            광고·패션 포토그래퍼와 리터쳐가<br />
+            결과물까지 꼼꼼하게 정밀 보정해드립니다.
+          </p>
+          <div className="fade-4" style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 40 }}>
+            <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', background: '#FF3D8B', color: '#fff', borderRadius: 16, padding: '22px 32px', fontFamily: "'Pretendard',sans-serif", fontSize: 20, fontWeight: 800, textDecoration: 'none', letterSpacing: '-0.02em', boxShadow: '0 0 48px rgba(255,61,139,0.45), 0 8px 32px rgba(255,61,139,0.3)', maxWidth: 420, width: '100%', transition: 'all 0.2s cubic-bezier(0.16,1,0.3,1)' }}
+            onMouseEnter={(e) => {e.currentTarget.style.transform = 'translateY(-3px)';e.currentTarget.style.boxShadow = '0 0 64px rgba(255,61,139,0.6), 0 12px 40px rgba(255,61,139,0.4)';}}
+            onMouseLeave={(e) => {e.currentTarget.style.transform = 'none';e.currentTarget.style.boxShadow = '0 0 48px rgba(255,61,139,0.45), 0 8px 32px rgba(255,61,139,0.3)';}}>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 500, opacity: 0.75, marginBottom: 4, letterSpacing: '0.04em' }}>NAVER 예약</div>
+                <div>지금 바로 예약하기 →</div>
+              </div>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>📅</div>
+            </a>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FEE500', color: '#1A1714', borderRadius: 12, padding: '14px 20px', fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 700, textDecoration: 'none', flex: 1, justifyContent: 'center' }}>
+                <span style={{ fontSize: 16 }}>💬</span> 카카오 상담
+              </a>
+              <button onClick={() => setPage('portfolio')} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '14px 20px', fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 600, cursor: 'pointer', flex: 1, justifyContent: 'center' }}>
+                포트폴리오 보기
+              </button>
+            </div>
+          </div>
+          <div className="fade-4" style={{ display: 'flex', gap: 40, marginTop: 48 }}>
+            {[['광고·패션 출신', '보정 전문가'], ['48h', '결과물 납품'], ['100%', '전문 보정 포함']].map(([v, l]) =>
+            <div key={l}>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 300, color: '#F9F7F5', letterSpacing: '-0.03em' }}>{v}</div>
+                <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 3, letterSpacing: '0.04em' }}>{l}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FLIP BOARD ── */}
+      <FlipBoard />
+
+
+      {/* ── INSTAGRAM FEED PORTFOLIO ── */}
+      <section style={{ background: '#0e0d0c', padding: '100px 0 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 40 }}>
+            <FadeIn>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 20, height: 2, background: '#FF3D8B' }} />
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>PORTFOLIO</span>
+              </div>
+              <h2 style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 'clamp(32px,4.5vw,58px)', fontWeight: 900, color: '#F9F7F5', letterSpacing: '-0.04em', lineHeight: 1.05, textTransform: 'uppercase', marginBottom: 20 }}>
+                마음에 드는 거<br />
+                <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.6)', color: 'transparent' }}>저장해두고 따라와.</span>
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 480 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px', background: 'rgba(255,61,139,0.09)', border: '1px solid rgba(255,61,139,0.25)', borderRadius: 14 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none" /></svg>
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FF3D8B' }}>STEP 01</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 18, fontWeight: 800, color: '#F9F7F5', letterSpacing: '-0.03em', lineHeight: 1.3, marginBottom: 4 }}>맘에 드는 거 저장해.</div>
+                    <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>@pps_studio_ 피드에서 원하는 분위기·포즈를 미리 저장해두고 방문하세요.</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px', background: 'linear-gradient(135deg,rgba(0,191,255,0.10) 0%,rgba(255,61,139,0.06) 100%)', border: '1px solid rgba(0,191,255,0.25)', borderRadius: 14, position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, borderRadius: '50%', background: 'rgba(0,191,255,0.15)', filter: 'blur(24px)', animation: 'glow 2.5s ease-in-out infinite' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0, position: 'relative' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(0,191,255,0.2)', border: '1px solid rgba(0,191,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>⚡</div>
+                      <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#00BFFF' }}>STEP 02</span>
+                    </div>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 18, fontWeight: 800, color: '#F9F7F5', letterSpacing: '-0.03em', lineHeight: 1.3, marginBottom: 4 }}>고민 없이 바로 시도해.</div>
+                    <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>이미 저장해뒀으니까 — 포즈 고민할 시간 없어.<br />그냥 다양하게 찍어보면 돼. 우리가 다 보정해줌.</div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', marginTop: 8 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none" /></svg>
+                </div>
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.5)' }}>@pps_studio_</span>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>→</span>
+              </a>
+            </FadeIn>
+          </div>
+        </div>
+
+        <FadeIn>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px 32px', display: 'flex', alignItems: 'center', gap: 28 }}>
+            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', padding: 2, flexShrink: 0 }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#1a1714', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF3D8B' }} />
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 16, fontWeight: 300, color: '#F9F7F5', letterSpacing: '-0.04em', marginLeft: 4 }}>PPS</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 600, color: '#F9F7F5' }}>pps_studio_</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2, fontFamily: "'Pretendard',sans-serif" }}>PPS 셀프사진관 · 대전 · 광고·패션 포토그래퍼 보정</div>
+            </div>
+            <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '8px 20px', fontFamily: "'Pretendard',sans-serif", fontSize: 12, fontWeight: 600, color: '#F9F7F5', textDecoration: 'none' }}>팔로우</a>
+          </div>
+        </FadeIn>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 3 }}>
+          {[
+          { label: '증명사진', likes: '284', gradient: '#1e1c1a,#2a2724' },
+          { label: '커플', likes: '412', gradient: '#1c1a1e,#24202a' },
+          { label: '프로필', likes: '356', gradient: '#1a1c1e,#202428' },
+          { label: '가족', likes: '198', gradient: '#1e1a1a,#2a2020' },
+          { label: '우정사진', likes: '521', gradient: '#1a1e1c,#202a24' },
+          { label: '증명사진', likes: '267', gradient: '#1c1e1a,#242a20' },
+          { label: '커플', likes: '389', gradient: '#1e1c1e,#2a242a' },
+          { label: '프로필', likes: '445', gradient: '#1a1c1c,#202424' },
+          { label: '가족', likes: '312', gradient: '#1e1a1c,#2a2024' },
+          { label: '증명사진', likes: '178', gradient: '#1c1a1e,#24202a' },
+          { label: '커플', likes: '503', gradient: '#1a1e1a,#20241a' },
+          { label: '우정사진', likes: '291', gradient: '#1e1c1a,#2a2820' }].
+          map((post, i) =>
+          <a key={i} href="https://www.instagram.com/pps_studio_/" target="_blank"
+          style={{ display: 'block', position: 'relative', aspectRatio: '1', overflow: 'hidden', cursor: 'pointer', textDecoration: 'none' }}
+          onMouseEnter={(e) => {e.currentTarget.querySelector('.ig-overlay').style.opacity = '1';}}
+          onMouseLeave={(e) => {e.currentTarget.querySelector('.ig-overlay').style.opacity = '0';}}>
+              <div style={{ width: '100%', height: '100%', background: `linear-gradient(160deg,${post.gradient})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+              </div>
+              <div className="ig-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: 0, transition: 'opacity 0.2s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: '#fff' }}>{post.likes}</span>
+                </div>
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)' }}>{post.label}</span>
+              </div>
+            </a>
+          )}
+        </div>
+
+        <div style={{ textAlign: 'center', padding: '48px 80px 80px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginBottom: 20, fontFamily: "'Pretendard',sans-serif" }}>더 많은 결과물은 인스타그램에서 확인하세요</p>
+          <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color: '#fff', borderRadius: 9999, padding: '12px 32px', fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(220,39,67,0.3)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none" /></svg>
+            @pps_studio_ 인스타그램 보기
+          </a>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ── */}
+      <section style={{ background: '#0e0d0c', padding: '0', position: 'relative', overflow: 'hidden' }}>
+        {/* Top rule */}
+        <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,61,139,0.5),transparent)' }} />
+
+        {/* Large editorial brand statement */}
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '80px 80px 72px', position: 'relative' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(ellipse 50% 70% at 60% 50%, rgba(255,61,139,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
+          <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+            <FadeIn>
+              {/* Studio name — big */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 48 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF3D8B', boxShadow: '0 0 16px rgba(255,61,139,0.6)', flexShrink: 0 }} />
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>PPS SELF STUDIO</span>
+                <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.08)' }} />
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)' }}>DAEJEON · EST. 2024</span>
+              </div>
+
+              {/* Hero copy — editorial, generous sizing */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 80, alignItems: 'flex-end' }}>
+                <div>
+                  <h2 style={{ fontFamily: "'Pretendard',sans-serif", fontWeight: 900, fontSize: 'clamp(52px,7vw,96px)', color: '#F9F7F5', letterSpacing: '-0.05em', lineHeight: 0.95, textTransform: 'uppercase', marginBottom: 0 }}>
+                    포토그래퍼
+                  </h2>
+                  <h2 style={{ fontFamily: "'Pretendard',sans-serif", fontWeight: 900, fontSize: 'clamp(52px,7vw,96px)', letterSpacing: '-0.05em', lineHeight: 0.95, textTransform: 'uppercase', marginBottom: 0, WebkitTextStroke: '2px rgba(255,255,255,0.35)', color: 'transparent' }}>
+                    없어도 돼.
+                  </h2>
+                  <h2 style={{ fontFamily: "'Pretendard',sans-serif", fontWeight: 900, fontSize: 'clamp(52px,7vw,96px)', color: '#FF3D8B', letterSpacing: '-0.05em', lineHeight: 0.95, textTransform: 'uppercase', marginBottom: 40, boxShadow: 'none', filter: 'none' }}>
+                    우리가 있어.
+                  </h2>
+                  {/* 3-column stat strip */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 28, gap: 0 }}>
+                    {[
+                    ['셀프 촬영', '포토그래퍼 없이\n편안하게 찍어요'],
+                    ['전문 보정', '광고·패션 출신\n리터쳐가 갈아줘요'],
+                    ['48H 납품', '촬영 후 48시간\n카톡으로 받아요']].
+                    map(([title, desc], i) =>
+                    <div key={title} style={{ paddingRight: 24, borderRight: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none', paddingLeft: i > 0 ? 24 : 0 }}>
+                        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FF3D8B', marginBottom: 8 }}>{title}</div>
+                        <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{desc}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* CTA stack — right column */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 4 }}>
+                  <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FF3D8B', color: '#fff', borderRadius: 20, padding: '28px 32px', fontFamily: "'Pretendard',sans-serif", textDecoration: 'none', boxShadow: '0 0 56px rgba(255,61,139,0.45)', transition: 'all 0.25s cubic-bezier(0.16,1,0.3,1)' }}
+                  onMouseEnter={(e) => {e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';e.currentTarget.style.boxShadow = '0 0 80px rgba(255,61,139,0.65)';}}
+                  onMouseLeave={(e) => {e.currentTarget.style.transform = 'none';e.currentTarget.style.boxShadow = '0 0 56px rgba(255,61,139,0.45)';}}>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.7, marginBottom: 6 }}>NAVER 예약</div>
+                      <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1 }}>지금 예약하기</div>
+                    </div>
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>→</div>
+                  </a>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: '#FEE500', color: '#1A1714', borderRadius: 14, padding: '18px 16px', fontFamily: "'Pretendard',sans-serif", textDecoration: 'none' }}>
+                      <span style={{ fontSize: 18 }}>💬</span>
+                      <span style={{ fontSize: 12, fontWeight: 700 }}>카카오 상담</span>
+                    </a>
+                    <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#F9F7F5', borderRadius: 14, padding: '18px 16px', fontFamily: "'Pretendard',sans-serif", textDecoration: 'none' }}>
+                      <span style={{ fontSize: 18 }}>◎</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>인스타그램</span>
+                    </a>
+                  </div>
+                  <div style={{ textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.1em', textTransform: 'uppercase', paddingTop: 6 }}>
+                    대전 중구 · 중앙타워빌딩 8F · 10:00–21:00
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section style={{ background: '#F9F7F5', padding: '100px 80px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <FadeIn style={{ marginBottom: 64 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <div style={{ width: 28, height: 2, background: '#FF3D8B' }} />
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#FF3D8B' }}>HOW IT WORKS</span>
+              <div style={{ width: 28, height: 2, background: '#FF3D8B' }} />
+            </div>
+            <h2 style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 'clamp(36px,5vw,64px)', fontWeight: 900, color: '#1A1714', letterSpacing: '-0.04em', lineHeight: 1, textTransform: 'uppercase' }}>
+              촬영부터 <span style={{ WebkitTextStroke: '2px #1A1714', color: 'transparent' }}>수령까지</span>
+            </h2>
+          </FadeIn>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0, borderTop: '2px solid #1A1714' }}>
+            {[
+            { n: '01', eng: 'RESERVE', desc: '앱 켜고 날짜 찍어. 끝.', sub: '네이버 예약 또는 카카오 채널로 30초면 완료.', color: '#FF3D8B' },
+            { n: '02', eng: 'SHOOT', desc: '부담 없이, 자유롭게.', sub: '전문 촬영 공간에서 자유롭게. 셀프 촬영이 어색하다면 작가 촬영 옵션도 있어요.', color: '#1A1714' },
+            { n: '03', eng: 'RETOUCH', desc: '프로가 다 갈아줌.', sub: '광고·패션 출신 포토그래퍼와 리터쳐가 정밀 보정.', color: '#FF3D8B' },
+            { n: '04', eng: 'RECEIVE', desc: '보정본, 바로 저장.', sub: '보정본과 고화질 원본, 카톡으로 간편하게 저장하세요. 48시간 이내 전달.', color: '#1A1714' }].
+            map((step, i) =>
+            <FadeIn key={step.n} delay={i * 0.1}>
+                <div style={{ padding: '36px 28px', borderRight: i < 3 ? '1px solid #E8E4E0' : 'none', minHeight: 280, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: i % 2 === 1 ? '#F0EDE9' : '#F9F7F5' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
+                      <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: step.color, textTransform: 'uppercase' }}>{step.eng}</span>
+                      <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 32, fontWeight: 200, color: 'rgba(26,23,20,0.12)', letterSpacing: '-0.04em' }}>{step.n}</span>
+                    </div>
+                    <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 22, fontWeight: 800, color: '#1A1714', lineHeight: 1.2, letterSpacing: '-0.03em', marginBottom: 12 }}>{step.desc}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#9A9590', lineHeight: 1.7, fontFamily: "'Pretendard',sans-serif", borderTop: '1px solid #E8E4E0', paddingTop: 16 }}>{step.sub}</div>
+                </div>
+              </FadeIn>
+            )}
+          </div>
+          <FadeIn>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '2px solid #1A1714', paddingTop: 24 }}>
+              <span style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 700, color: '#9A9590', letterSpacing: '0.02em' }}>전체 과정 4단계 · 48시간 이내 완료</span>
+              <button onClick={() => setPage('guide')} style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 700, color: '#FF3D8B', background: 'none', border: '1px solid #FF3D8B', borderRadius: 9999, padding: '10px 24px', cursor: 'pointer' }}>자세히 보기 →</button>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      <Footer setPage={setPage} />
+    </div>);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: PORTFOLIO
+═══════════════════════════════════════════════════════════════ */
+function PortfolioPage({ setPage }) {
+
+
+  const allItems = [
+    { cat:'증명사진', label:'취업·공무원용', likes:'284', gradient:'#1e1c1a,#2a2724', size:'tall' },
+    { cat:'커플·우정', label:'커플 스냅', likes:'412', gradient:'#1c1a1e,#24202a', size:'wide' },
+    { cat:'가족', label:'가족 사진', likes:'198', gradient:'#1e1a1a,#2a2020', size:'normal' },
+    { cat:'증명사진', label:'여권·비자용', likes:'356', gradient:'#1a1c1e,#202428', size:'normal' },
+    { cat:'커플·우정', label:'우정 사진', likes:'521', gradient:'#1a1e1c,#202a24', size:'tall' },
+    { cat:'증명사진', label:'프로필용', likes:'267', gradient:'#1c1e1a,#242a20', size:'normal' },
+    { cat:'가족', label:'가족 스냅', likes:'312', gradient:'#1e1a1c,#2a2024', size:'wide' },
+    { cat:'커플·우정', label:'커플 프로필', likes:'389', gradient:'#1e1c1e,#2a242a', size:'normal' },
+    { cat:'증명사진', label:'증명사진', likes:'445', gradient:'#1a1c1c,#202424', size:'tall' },
+    { cat:'가족', label:'3인 가족', likes:'178', gradient:'#1c1a1e,#24202a', size:'normal' },
+    { cat:'커플·우정', label:'베스트프렌드', likes:'503', gradient:'#1a1e1a,#20241a', size:'normal' },
+    { cat:'증명사진', label:'학생증용', likes:'291', gradient:'#1e1c1a,#2a2820', size:'normal' },
+    { cat:'커플·우정', label:'데이트 스냅', likes:'478', gradient:'#1c1a1c,#24202a', size:'wide' },
+    { cat:'가족', label:'가족 단체', likes:'334', gradient:'#1a1c1a,#202420', size:'normal' },
+    { cat:'증명사진', label:'공무원용', likes:'219', gradient:'#1e1a1e,#2a202a', size:'normal' },
+    { cat:'커플·우정', label:'우정샷', likes:'567', gradient:'#1a1e1e,#20282a', size:'tall' },
+  ];
+
+
+
+  return (
+    <div style={{ paddingTop:64, background:'#0e0d0c', minHeight:'100vh' }}>
+
+      {/* ── HERO ── */}
+      <div style={{ padding:'80px 80px 0', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(ellipse 40% 60% at 80% 30%, rgba(255,61,139,0.06) 0%, transparent 65%)', pointerEvents:'none' }} />
+        <div style={{ maxWidth:1200, margin:'0 auto', position:'relative' }}>
+          {/* Instagram profile header */}
+          <div style={{ display:'flex', alignItems:'center', gap:24, marginBottom:40 }}>
+            <div style={{ width:80, height:80, borderRadius:'50%', background:'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', padding:3, flexShrink:0 }}>
+              <div style={{ width:'100%', height:'100%', borderRadius:'50%', background:'#1a1714', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+                  <div style={{ width:8, height:8, borderRadius:'50%', background:'#FF3D8B' }} />
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:16, fontWeight:300, color:'#F9F7F5', letterSpacing:'-0.04em' }}>PPS</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:6 }}>
+                <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:22, fontWeight:600, color:'#F9F7F5' }}>pps_studio_</div>
+                <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, padding:'6px 18px', fontFamily:"'Pretendard',sans-serif", fontSize:13, fontWeight:600, color:'#F9F7F5', textDecoration:'none' }}>팔로우</a>
+                <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:'6px 12px', fontFamily:"'Pretendard',sans-serif", fontSize:13, fontWeight:600, color:'rgba(255,255,255,0.6)', textDecoration:'none' }}>메시지</a>
+              </div>
+              <div style={{ display:'flex', gap:32, marginBottom:8 }}>
+                {[['게시물', '200+'], ['팔로워', '1.2K'], ['팔로잉', '180']].map(([l, v]) => (
+                  <div key={l} style={{ textAlign:'center' }}>
+                    <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:16, fontWeight:600, color:'#F9F7F5' }}>{v}</div>
+                    <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.4)' }}>{l}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
+                PPS 셀프사진관 · 대전 중구 · 광고·패션 포토그래퍼 정밀 보정<br/>
+                <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ color:'#00BFFF', textDecoration:'none' }}>naver.me/IMyGdHlr</a>
+              </div>
+            </div>
+            {/* right: step cards */}
+            <div style={{ display:'flex', flexDirection:'column', gap:8, minWidth:280 }}>
+              {[
+                { step:'STEP 01', label:'인스타에서 마음에 드는 사진 저장', color:'#FF3D8B' },
+                { step:'STEP 02', label:'방문 시 보여주면 바로 따라 찍어드려요', color:'#00BFFF' },
+              ].map((s, i) => (
+                <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10 }}>
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:8, fontWeight:700, letterSpacing:'0.14em', color:s.color, flexShrink:0 }}>{s.step}</span>
+                  <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.5)' }}>{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── GRID ── 3-column masonry style with bigger cells */}
+      <div style={{ padding:'3px 0' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto 0 auto', padding:'0 0', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:3 }}>
+          {allItems.map((item, i) => {
+            const h = item.size === 'tall' ? 520 : item.size === 'wide' ? 320 : 380;
+            return (
+              <a key={i} href="https://www.instagram.com/pps_studio_/" target="_blank"
+                style={{ display:'block', position:'relative', overflow:'hidden', cursor:'pointer', textDecoration:'none', gridRow: item.size === 'tall' ? 'span 1' : 'auto' }}
+                onMouseEnter={e => { e.currentTarget.querySelector('.ig-overlay').style.opacity='1'; e.currentTarget.querySelector('.ig-img').style.transform='scale(1.04)'; }}
+                onMouseLeave={e => { e.currentTarget.querySelector('.ig-overlay').style.opacity='0'; e.currentTarget.querySelector('.ig-img').style.transform='scale(1)'; }}>
+                <div className="ig-img" style={{ height:h, background:'linear-gradient(160deg,' + item.gradient + ')', transition:'transform 0.5s cubic-bezier(0.16,1,0.3,1)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <div className="ig-overlay" style={{ position:'absolute', inset:0, background:'linear-gradient(to top,rgba(0,0,0,0.75) 0%,transparent 50%)', display:'flex', flexDirection:'column', alignItems:'flex-start', justifyContent:'flex-end', padding:'20px 18px', opacity:0, transition:'opacity 0.3s' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:13, fontWeight:600, color:'#fff' }}>{item.likes}</span>
+                  </div>
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'rgba(255,255,255,0.7)' }}>{item.cat} · {item.label}</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── CTA ── */}
+      <div style={{ textAlign:'center', padding:'56px 80px 72px', borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <p style={{ fontSize:13, color:'rgba(255,255,255,0.3)', marginBottom:20, fontFamily:"'Pretendard',sans-serif" }}>더 많은 결과물은 인스타그램에서 확인하세요</p>
+        <a href="https://www.instagram.com/pps_studio_/" target="_blank" style={{ display:'inline-flex', alignItems:'center', gap:10, background:'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', color:'#fff', borderRadius:9999, padding:'14px 36px', fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, textDecoration:'none', boxShadow:'0 4px 24px rgba(220,39,67,0.3)' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg>
+          @pps_studio_ 인스타그램 보기
+        </a>
+      </div>
+
+      <Footer setPage={setPage} />
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: GUIDE
+═══════════════════════════════════════════════════════════════ */
+function GuideImageBlock({ label, sublabel, h = 280, gradient = '#1a1714,#2a2724', badge }) {
+  return (
+    <div style={{ position:'relative', borderRadius:16, overflow:'hidden', height:h, background:'linear-gradient(160deg,' + gradient + ')', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.2)' }}>{label}</span>
+        {sublabel && <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:11, color:'rgba(255,255,255,0.15)' }}>{sublabel}</span>}
+      </div>
+      {badge && (
+        <div style={{ position:'absolute', top:14, left:14, background:'rgba(255,61,139,0.85)', backdropFilter:'blur(8px)', borderRadius:9999, padding:'4px 12px', fontFamily:"'DM Sans',sans-serif", fontSize:9, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'#fff' }}>{badge}</div>
+      )}
+    </div>
+  );
+}
+
+function GuidePage({ setPage }) {
+  const tips = [
+    { icon:'👔', t:'의상 준비', d:'다양한 룩으로 찍고 싶다면 여러 벌 준비해 오세요.' },
+    { icon:'💄', t:'메이크업', d:'방문 전 메이크업을 마쳐 오시면 더 많은 촬영 시간을 확보하실 수 있습니다.' },
+    { icon:'📋', t:'보정 요청', d:'원하시는 보정 스타일이나 레퍼런스 사진이 있다면 미리 준비해 오세요.' },
+    { icon:'📱', t:'인스타 참고', d:'@pps_studio_ 에서 결과물을 미리 확인하고 원하는 스타일을 저장해오세요.' },
+  ];
+
+  return (
+    <div style={{ paddingTop:64, background:'#0e0d0c', minHeight:'100vh' }}>
+
+      {/* ── HERO ── */}
+      <div style={{ position:'relative', overflow:'hidden' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', minHeight:480 }}>
+          {/* Left: text */}
+          <div style={{ padding:'80px 64px', display:'flex', flexDirection:'column', justifyContent:'center', position:'relative', zIndex:1 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:24 }}>
+              <div style={{ width:8, height:8, borderRadius:'50%', background:'#FF3D8B', boxShadow:'0 0 12px rgba(255,61,139,0.6)' }} />
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.22em', textTransform:'uppercase', color:'rgba(255,255,255,0.4)' }}>HOW TO USE</span>
+            </div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:'clamp(40px,5vw,72px)', color:'#F9F7F5', letterSpacing:'-0.05em', lineHeight:0.95, textTransform:'uppercase', marginBottom:12 }}>이용방법</div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:'clamp(40px,5vw,72px)', letterSpacing:'-0.05em', lineHeight:0.95, textTransform:'uppercase', marginBottom:32, WebkitTextStroke:'2px rgba(255,255,255,0.25)', color:'transparent' }}>GUIDE</div>
+            <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:15, color:'rgba(255,255,255,0.45)', lineHeight:1.9, maxWidth:380 }}>
+              예약부터 결과물 수령까지<br/>전 과정을 사진으로 안내해 드립니다.
+            </p>
+          </div>
+          {/* Right: image collage */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gridTemplateRows:'1fr 1fr', gap:3 }}>
+            <GuideImageBlock label="스튜디오 내부" h={240} gradient="#1e1a1a,#2a2020" badge="SPACE" />
+            <GuideImageBlock label="셀프 촬영" h={240} gradient="#1a1a1e,#20202a" badge="SHOOTING" />
+            <GuideImageBlock label="전문 보정" h={240} gradient="#1a1e1a,#20241a" badge="RETOUCH" />
+            <GuideImageBlock label="결과물" h={240} gradient="#1e1c1a,#2a2818" badge="RESULT" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── STEP 01: 예약 ── */}
+      <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'80px 80px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+            <FadeIn>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:80, fontWeight:200, color:'rgba(255,61,139,0.15)', letterSpacing:'-0.06em', lineHeight:1, marginBottom:8 }}>01</div>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#FF3D8B', marginBottom:12 }}>STEP 01</div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:36, color:'#F9F7F5', letterSpacing:'-0.04em', marginBottom:20 }}>예약하기</div>
+              <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.5)', lineHeight:1.9, marginBottom:28 }}>
+                네이버 예약 또는 카카오채널로 원하는 날짜와 패키지를 선택해 예약하세요. 예약 후 확인 메시지를 받으시면 완료입니다.
+              </p>
+              <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                {['네이버 예약 페이지에서 날짜·시간 선택', '패키지 선택 후 결제 완료', '카카오톡으로 예약 확인 메시지 수신', '예약 변경은 방문 24시간 전까지 가능'].map((item, i) => (
+                  <div key={i} style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
+                    <div style={{ width:20, height:20, borderRadius:'50%', background:'rgba(255,61,139,0.15)', border:'1px solid rgba(255,61,139,0.3)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:1 }}>
+                      <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, fontWeight:700, color:'#FF3D8B' }}>{i+1}</span>
+                    </div>
+                    <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.55)', lineHeight:1.7 }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:'flex', gap:12, marginTop:32 }}>
+                <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'#FF3D8B', color:'#fff', borderRadius:12, padding:'12px 24px', fontFamily:"'Pretendard',sans-serif", fontSize:13, fontWeight:700, textDecoration:'none', boxShadow:'0 0 16px rgba(255,61,139,0.35)' }}>네이버 예약 →</a>
+                <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'#FEE500', color:'#1A1714', borderRadius:12, padding:'12px 24px', fontFamily:"'Pretendard',sans-serif", fontSize:13, fontWeight:700, textDecoration:'none' }}>💬 카카오 문의</a>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <GuideImageBlock label="네이버 예약" h={200} gradient="#0d1a0d,#1a2e1a" badge="NAVER" />
+                <GuideImageBlock label="카카오 상담" h={200} gradient="#1a1a0d,#2a2a0d" badge="KAKAO" />
+                <div style={{ gridColumn:'1/-1' }}>
+                  <GuideImageBlock label="예약 확인 화면" h={160} gradient="#1a1714,#252220" badge="CONFIRM" />
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── STEP 02: 방문 & 입장 ── */}
+      <div style={{ background:'rgba(255,255,255,0.02)', borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'80px 80px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+            <FadeIn delay={0.05}>
+              <div style={{ display:'grid', gridTemplateRows:'1fr 1fr', gap:10 }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                  <GuideImageBlock label="빌딩 입구" h={180} gradient="#1a1a1a,#2a2a2a" badge="ENTRANCE" />
+                  <GuideImageBlock label="엘리베이터" h={180} gradient="#141a1a,#202a2a" badge="8F" />
+                </div>
+                <GuideImageBlock label="스튜디오 입구" h={200} gradient="#1a1416,#2a2022" badge="STUDIO" />
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:80, fontWeight:200, color:'rgba(244,167,192,0.12)', letterSpacing:'-0.06em', lineHeight:1, marginBottom:8 }}>02</div>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#F4A7C0', marginBottom:12 }}>STEP 02</div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:36, color:'#F9F7F5', letterSpacing:'-0.04em', marginBottom:20 }}>방문 & 입장</div>
+              <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.5)', lineHeight:1.9, marginBottom:24 }}>
+                대전광역시 중구 대전천서로 475, 중앙타워빌딩 8층으로 오세요. 입장 후 스태프가 촬영 방법을 안내해 드립니다.
+              </p>
+              <div style={{ padding:'16px 20px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, marginBottom:20 }}>
+                <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'rgba(255,200,80,0.5)', marginBottom:10 }}>찾아오는 방법</div>
+                {[['지하철', '대전 1호선 중앙로역 도보 5분'], ['버스', '대전천서로 정류장 하차'], ['주차', '평일 연계 유료주차장 1시간 / 주말 사전 문의']].map(([m, d]) => (
+                  <div key={m} style={{ display:'flex', gap:12, alignItems:'flex-start', marginBottom:8 }}>
+                    <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, color:'#00BFFF', minWidth:32 }}>{m}</span>
+                    <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.45)', lineHeight:1.6 }}>{d}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── STEP 03: 셀프 촬영 ── */}
+      <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'80px 80px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+            <FadeIn>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:80, fontWeight:200, color:'rgba(0,191,255,0.12)', letterSpacing:'-0.06em', lineHeight:1, marginBottom:8 }}>03</div>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#00BFFF', marginBottom:12 }}>STEP 03</div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:36, color:'#F9F7F5', letterSpacing:'-0.04em', marginBottom:20 }}>셀프 촬영</div>
+              <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.5)', lineHeight:1.9, marginBottom:24 }}>
+                원하는 만큼 자유롭게 촬영하세요. 인스타그램에서 미리 저장해온 레퍼런스를 보면서 다양한 포즈를 시도해보세요.
+              </p>
+              {/* 작가 촬영 옵션 highlight */}
+              <div style={{ padding:'18px 20px', background:'rgba(255,61,139,0.08)', border:'1px solid rgba(255,61,139,0.25)', borderRadius:14, marginBottom:20 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+                  <div style={{ width:6, height:6, borderRadius:'50%', background:'#FF3D8B' }} />
+                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:9, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'#FF3D8B' }}>ADD-ON — 작가 촬영 옵션</span>
+                </div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, color:'#F9F7F5', marginBottom:4 }}>셀프 촬영이 어색하신가요?</div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.7 }}>전담 작가가 포즈·표정 디렉팅하며 직접 촬영해드립니다. +50,000원으로 추가 가능해요.</div>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <GuideImageBlock label="셀프 촬영 중" h={220} gradient="#1a1414,#2a1e1e" badge="SELF" />
+                <GuideImageBlock label="작가 촬영" h={220} gradient="#1a1416,#2a1e22" badge="ARTIST" />
+                <GuideImageBlock label="포즈 연출" h={180} gradient="#14141a,#1e1e2a" badge="POSE" />
+                <GuideImageBlock label="레퍼런스 확인" h={180} gradient="#14181a,#1e2428" badge="REF" />
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── STEP 04: 전문가 보정 ── */}
+      <div style={{ background:'rgba(255,255,255,0.02)', borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'80px 80px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+            <FadeIn delay={0.05}>
+              {/* Before/After comparison */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:3, borderRadius:16, overflow:'hidden' }}>
+                <div style={{ position:'relative' }}>
+                  <GuideImageBlock label="보정 전" h={300} gradient="#181818,#242424" />
+                  <div style={{ position:'absolute', bottom:12, left:12, background:'rgba(0,0,0,0.7)', backdropFilter:'blur(8px)', borderRadius:9999, padding:'4px 12px', fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.1em', color:'rgba(255,255,255,0.6)', textTransform:'uppercase' }}>BEFORE</div>
+                </div>
+                <div style={{ position:'relative' }}>
+                  <GuideImageBlock label="보정 후" h={300} gradient="#1a1416,#281e22" />
+                  <div style={{ position:'absolute', bottom:12, right:12, background:'rgba(255,61,139,0.85)', backdropFilter:'blur(8px)', borderRadius:9999, padding:'4px 12px', fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.1em', color:'#fff', textTransform:'uppercase' }}>AFTER</div>
+                </div>
+              </div>
+              <div style={{ marginTop:12 }}>
+                <GuideImageBlock label="리터칭 작업 화면" h={140} gradient="#141418,#1e1e24" badge="RETOUCH" />
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:80, fontWeight:200, color:'rgba(123,184,232,0.12)', letterSpacing:'-0.06em', lineHeight:1, marginBottom:8 }}>04</div>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#7BB8E8', marginBottom:12 }}>STEP 04</div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:36, color:'#F9F7F5', letterSpacing:'-0.04em', marginBottom:20 }}>전문가 보정</div>
+              <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.5)', lineHeight:1.9, marginBottom:24 }}>
+                광고·패션 사진 작업을 해온 포토그래퍼와 리터쳐가 꼼꼼하게 정밀 보정합니다. 원하시는 보정 스타일이 있다면 미리 말씀해 주세요.
+              </p>
+              <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                {['피부 톤 & 질감 보정', '배경 정리 및 색감 조정', '얼굴형·체형 자연스러운 보정', '요청 스타일 반영 (레퍼런스 가능)', '1회 수정 무료 제공'].map((item, i) => (
+                  <div key={i} style={{ display:'flex', gap:10, alignItems:'center' }}>
+                    <div style={{ width:5, height:5, borderRadius:'50%', background:'#7BB8E8', flexShrink:0 }} />
+                    <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.55)' }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── STEP 05: 결과물 수령 ── */}
+      <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'80px 80px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+            <FadeIn>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:80, fontWeight:200, color:'rgba(244,167,192,0.12)', letterSpacing:'-0.06em', lineHeight:1, marginBottom:8 }}>05</div>
+              <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#F4A7C0', marginBottom:12 }}>STEP 05</div>
+              <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:36, color:'#F9F7F5', letterSpacing:'-0.04em', marginBottom:20 }}>결과물 수령</div>
+              <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.5)', lineHeight:1.9, marginBottom:24 }}>
+                촬영 완료 후 영업일 기준 <strong style={{ color:'#FF3D8B' }}>48시간 이내</strong> 카카오톡으로 고화질 원본 파일을 전달드립니다. 다시 방문하실 필요 없어요.
+              </p>
+              <div style={{ padding:'20px 24px', background:'rgba(255,61,139,0.06)', border:'1px solid rgba(255,61,139,0.15)', borderRadius:14 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:12 }}>
+                  <span style={{ fontSize:20 }}>💬</span>
+                  <span style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, color:'#F9F7F5' }}>카카오톡으로 간편 수령</span>
+                </div>
+                <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:13, color:'rgba(255,255,255,0.45)', lineHeight:1.8 }}>
+                  보정본과 고화질 원본 파일을 카카오톡으로 발송해 드립니다. 앨범에 바로 저장하세요!
+                </div>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <GuideImageBlock label="카카오톡 수신" h={240} gradient="#1a1a0d,#2a2a10" badge="KAKAO" />
+                <GuideImageBlock label="고화질 원본" h={240} gradient="#1a1416,#28201e" badge="HD FILE" />
+                <div style={{ gridColumn:'1/-1' }}>
+                  <GuideImageBlock label="완성된 결과물" h={160} gradient="#1a1416,#2a1e1e" badge="RESULT" />
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </div>
+
+      {/* ── TIPS ── */}
+      <div style={{ background:'#111', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'80px 80px' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto' }}>
+          <FadeIn>
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
+              <div style={{ width:20, height:2, background:'#FF3D8B' }} />
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:10, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:'#FF3D8B' }}>TIPS</span>
+            </div>
+            <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:'clamp(28px,4vw,48px)', color:'#F9F7F5', letterSpacing:'-0.04em', textTransform:'uppercase', marginBottom:48 }}>
+              더 잘 찍는 법
+            </div>
+          </FadeIn>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+            {tips.map((tip, i) => (
+              <FadeIn key={tip.t} delay={i * 0.08}>
+                <div style={{ borderRadius:16, overflow:'hidden' }}>
+                  <GuideImageBlock label={tip.t} h={160} gradient={['#1a1414,#2a1e1e','#1a1418,#2a1e24','#14181a,#1e2428','#1a1a14,#2a2a1e'][i]} />
+                  <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)', borderTop:'none', borderRadius:'0 0 16px 16px', padding:'16px 18px' }}>
+                    <div style={{ fontSize:20, marginBottom:8 }}>{tip.icon}</div>
+                    <div style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, color:'#F9F7F5', marginBottom:6 }}>{tip.t}</div>
+                    <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', lineHeight:1.7 }}>{tip.d}</div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA ── */}
+      <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', padding:'64px 80px', textAlign:'center', background:'#0e0d0c' }}>
+        <FadeIn>
+          <div style={{ fontFamily:"'Pretendard',sans-serif", fontWeight:900, fontSize:28, color:'#F9F7F5', letterSpacing:'-0.03em', marginBottom:12 }}>이제 찍으러 가볼까요?</div>
+          <p style={{ fontFamily:"'Pretendard',sans-serif", fontSize:14, color:'rgba(255,255,255,0.35)', marginBottom:28 }}>지금 바로 예약하고 완성도 높은 사진을 경험해 보세요.</p>
+          <div style={{ display:'flex', gap:12, justifyContent:'center' }}>
+            <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'#FF3D8B', color:'#fff', borderRadius:12, padding:'14px 32px', fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, textDecoration:'none', boxShadow:'0 0 20px rgba(255,61,139,0.35)' }}>네이버 예약하기 →</a>
+            <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'#FEE500', color:'#1A1714', borderRadius:12, padding:'14px 32px', fontFamily:"'Pretendard',sans-serif", fontSize:14, fontWeight:700, textDecoration:'none' }}>💬 카카오 상담</a>
+          </div>
+        </FadeIn>
+      </div>
+
+      <Footer setPage={setPage} />
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: PRICING
+═══════════════════════════════════════════════════════════════ */
+function PricingPage({ setPage }) {
+  const packages = [
+  { tag: 'BEST', tagColor: '#FF3D8B', name: '기본 촬영 패키지', sub: '2인~, 인원수에 따라 요금 계산', price: '60,000', unit: '원 ~', features: ['2인 기본 요금 60,000원', '3~5인: 1인 추가당 +15,000원', '6인~: 1인 추가당 +10,000원', '정밀 보정 포함', '48시간 이내 카카오톡 전달'], accent: 'rgba(255,61,139,0.08)', border: 'rgba(255,61,139,0.2)', highlight: true },
+  { tag: 'ID', tagColor: '#00BFFF', name: '프리미엄 ID 패키지', sub: '증명사진 전문 패키지', price: '30,000', unit: '/ 1인', features: ['취업·공무원·여권·비자용', '배경 교체 포함', '고화질 파일 제공', '48시간 이내 납품', '카카오톡 파일 발송'], accent: 'rgba(0,191,255,0.05)', border: 'rgba(0,191,255,0.15)' },
+  { tag: 'COUPLE', tagColor: '#F4A7C0', name: '프라이빗 패키지', sub: '평일 10·11시 / 주말 20시 한정', price: '100,000', unit: '/ 2인', features: ['2인 함께 두가지 컨셉을 한시간동안 자유 촬영', '총 5컷 정밀 보정', '고화질 원본 파일 전달', '48시간 이내 납품', '⏰ 평일 10:00·11:00 / 주말 20:00'], accent: 'rgba(244,167,192,0.06)', border: 'rgba(244,167,192,0.2)' },
+  { tag: 'PREMIUM', tagColor: '#F9F7F5', name: '프리미엄 풀 패키지', sub: '최고의 완성도를 원한다면', price: '58,000', unit: '/ 1인', features: ['무제한 셀프 촬영', '정밀 보정 10컷 포함', '흑백 보정 3컷 추가', '고화질 원본 파일 전달', '24시간 이내 납품'], accent: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.1)' },
+  { tag: 'GROUP', tagColor: '#7BB8E8', name: '단체 촬영 패키지', sub: '6인 이상 함께', price: '110,000', unit: '/ 6인~', features: ['6인 이상 단체 무제한 셀프 촬영', '30명까지 넉넉한 촬영공간', '고화질 파일 전달', '48시간 이내 납품', '추가 인원 협의 가능'], accent: 'rgba(123,184,232,0.05)', border: 'rgba(123,184,232,0.15)' },
+  { tag: 'ADD-ON', tagColor: '#FF3D8B', name: '작가 촬영 옵션', sub: '셀프 촬영이 어색한 분들을 위한 서비스', price: '50,000', unit: '/ 추가', features: ['전담 작가가 직접 촬영 진행', '포즈 & 표정 디렉팅 포함', '혼자서도 자연스러운 사진', '셀프 촬영 패키지에 추가 가능', '촬영 종료 후 보정 동일 적용'], accent: 'rgba(255,61,139,0.06)', border: 'rgba(255,61,139,0.2)' },
+    { tag: 'PRINT', tagColor: '#3DB87A', name: '당일 출력 패키지', sub: '바로 받고 싶을 때', price: '22,000', unit: '/ 1인', features: ['ID 사진 촬영', '즉석 인화 포함', '방문 당일 수령 가능', '디지털 파일 추가 제공', '규격 선택 가능'], accent: 'rgba(61,184,122,0.05)', border: 'rgba(61,184,122,0.15)' }];
+
+
+  return (
+    <div style={{ paddingTop: 64, background: '#0e0d0c', minHeight: '100vh' }}>
+
+      {/* HERO HEADER */}
+      <div style={{ position: 'relative', padding: '100px 80px 80px', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(ellipse 50% 70% at 80% 50%, rgba(255,61,139,0.07) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,61,139,0.4),transparent)' }} />
+        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+          <FadeIn>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF3D8B', boxShadow: '0 0 14px rgba(255,61,139,0.6)' }} />
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>PRICING</span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+            </div>
+            <div style={{ fontFamily: "'Pretendard',sans-serif", fontWeight: 900, fontSize: 'clamp(52px,7vw,96px)', color: '#F9F7F5', letterSpacing: '-0.05em', lineHeight: 0.95, textTransform: 'uppercase', marginBottom: 12 }}>가격 안내</div>
+            <div style={{ fontFamily: "'Pretendard',sans-serif", fontWeight: 900, fontSize: 'clamp(52px,7vw,96px)', letterSpacing: '-0.05em', lineHeight: 0.95, textTransform: 'uppercase', marginBottom: 40, WebkitTextStroke: '2px rgba(255,255,255,0.25)', color: 'transparent' }}>PACKAGES</div>
+            <p style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 15, color: 'rgba(255,255,255,0.4)', lineHeight: 1.9, maxWidth: 520 }}>
+              모든 패키지에는 <strong style={{ color: '#FF3D8B', fontWeight: 700 }}>광고·패션 출신 포토그래퍼의 정밀 보정</strong>이 포함됩니다.<br />
+              촬영 후 48시간 이내, 고화질 파일을 카카오톡으로 전달드립니다.
+            </p>
+          </FadeIn>
+        </div>
+      </div>
+
+      {/* ── PRICE CALCULATOR ── */}
+      <PriceCalculator />
+
+      {/* PACKAGE GRID */}
+      <div style={{ padding: '0 80px 80px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+          {packages.map((pkg, i) =>
+          <FadeIn key={pkg.name} delay={i * 0.07}>
+              <div style={{ background: pkg.accent, border: `1px solid ${pkg.border}`, borderRadius: 20, padding: '36px 32px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+                {pkg.highlight && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#FF3D8B,#F4A7C0)' }} />}
+                {pkg.highlight && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,61,139,0.08) 0%, transparent 60%)', pointerEvents: 'none' }} />}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: pkg.tagColor, background: `${pkg.tagColor}18`, padding: '4px 10px', borderRadius: 9999, border: `1px solid ${pkg.tagColor}30` }}>{pkg.tag}</span>
+                  {pkg.highlight && <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 8, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FF3D8B' }}>★ POPULAR</span>}
+                </div>
+                <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 20, fontWeight: 800, color: '#F9F7F5', marginBottom: 4, letterSpacing: '-0.02em' }}>{pkg.name}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginBottom: 28, fontFamily: "'Pretendard',sans-serif" }}>{pkg.sub}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${pkg.border}` }}>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 42, fontWeight: 300, color: '#F9F7F5', letterSpacing: '-0.05em', lineHeight: 1 }}>{pkg.price}</span>
+                  <span style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>원 {pkg.unit}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginBottom: 32, flex: 1 }}>
+                  {pkg.features.map((f, j) =>
+                <div key={j} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                      <div style={{ width: 5, height: 5, borderRadius: '50%', background: pkg.tagColor, flexShrink: 0, boxShadow: `0 0 6px ${pkg.tagColor}60` }} />
+                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', fontFamily: "'Pretendard',sans-serif" }}>{f}</span>
+                    </div>
+                )}
+                </div>
+                <button onClick={() => window.open('https://naver.me/IMyGdHlr', '_blank')} style={{ background: pkg.highlight ? '#FF3D8B' : 'rgba(255,255,255,0.08)', color: '#fff', border: `1px solid ${pkg.highlight ? 'transparent' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '15px 24px', fontFamily: "'Pretendard',sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', letterSpacing: '-0.01em', boxShadow: pkg.highlight ? '0 0 24px rgba(255,61,139,0.4)' : 'none', transition: 'all 0.2s' }}>이 패키지로 예약하기</button>
+              </div>
+            </FadeIn>
+          )}
+        </div>
+
+        <FadeIn>
+          <div style={{ maxWidth: 1200, margin: '24px auto 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ padding: '24px 28px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14 }}>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,200,80,0.5)', marginBottom: 12 }}>추가 옵션</div>
+              <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 2.0 }}>
+                추가 촬영 시간 10분당 <strong style={{ color: 'rgba(255,255,255,0.7)' }}>5,000원</strong><br />
+                추가 보정컷 1컷당 <strong style={{ color: 'rgba(255,255,255,0.7)' }}>10,000원</strong>
+              </div>
+            </div>
+            <div style={{ padding: '24px 28px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14 }}>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,200,80,0.5)', marginBottom: 12 }}>안내 사항</div>
+              <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 2.0 }}>
+                예약 취소는 방문 <strong style={{ color: 'rgba(255,255,255,0.7)' }}>3일 전</strong>까지 카카오채널로 문의<br />
+                가격은 사전 공지 없이 변경될 수 있습니다
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn>
+          <div style={{ maxWidth: 1200, margin: '24px auto 0', padding: '36px 40px', background: 'linear-gradient(135deg,rgba(255,61,139,0.1) 0%,rgba(0,191,255,0.05) 100%)', border: '1px solid rgba(255,61,139,0.2)', borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32 }}>
+            <div>
+              <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 20, fontWeight: 900, color: '#F9F7F5', letterSpacing: '-0.03em', marginBottom: 6 }}>어떤 패키지가 맞는지 모르겠어요?</div>
+              <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>카카오채널로 편하게 물어보세요. 상황에 맞게 추천해드립니다.</div>
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexShrink: 0 }}>
+              <a href="http://pf.kakao.com/_xgxeIMxj/chat" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FEE500', color: '#1A1714', borderRadius: 12, padding: '14px 24px', fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>💬 카카오 상담</a>
+              <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF3D8B', color: '#fff', borderRadius: 12, padding: '14px 24px', fontFamily: "'Pretendard',sans-serif", fontSize: 13, fontWeight: 700, textDecoration: 'none', boxShadow: '0 0 20px rgba(255,61,139,0.35)' }}>네이버 예약</a>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+
+      <Footer setPage={setPage} />
+    </div>);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: FAQ
+═══════════════════════════════════════════════════════════════ */
+function FAQPage({ setPage }) {
+  const [open, setOpen] = useState(null);
+  const faqs = [
+  { q: '예약은 어떻게 하나요?', a: '네이버 예약 페이지 또는 카카오채널로 원하는 날짜와 패키지를 선택해 예약하실 수 있습니다.' },
+  { q: '촬영 시간은 얼마나 되나요?', a: '패키지에 따라 30분~1시간 자유롭게 촬영하실 수 있습니다. 추가 시간이 필요하시면 10분당 5,000원에 연장 가능합니다.' },
+  { q: '의상은 몇 벌 입어도 되나요?', a: '의상 교체 횟수 제한은 없습니다. 다양한 룩으로 자유롭게 촬영해 보세요.' },
+  { q: '보정 결과물은 언제 받을 수 있나요?', a: '촬영 완료 후 영업일 기준 48시간 이내 카카오톡으로 고화질 파일을 발송해 드립니다.' },
+  { q: '혼자 방문해도 괜찮나요?', a: '물론입니다! 혼자 방문하시는 고객님이 가장 많습니다. 부담 없이 오세요.' },
+  { q: '프라이빗 패키지는 언제 이용할 수 있나요?', a: '프라이빗 패키지는 운영 시간이 따로 정해져 있어요.\n평일: 오전 10:00, 11:00 두 타임 예약 가능\n주말 및 공휴일: 오후 20:00 한 타임만 운영합니다.\n예약 시 해당 시간대를 꼭 선택해 주세요. 문의는 카카오채널로 편하게 연락해 주세요.' },
+  { q: '예약 취소나 변경이 가능한가요?', a: '방문 24시간 전까지 카카오채널로 문의 주시면 무료로 취소·변경하실 수 있습니다.' },
+  { q: '주차가 가능한가요?', a: '평일은 스튜디오와 연계된 유료주차장을 1시간 이용가능하세요.\n주말 및 공휴일에는 사전 연락주시면 별도 주차장으로 안내드리고 있으니 세부 사항은 카카오채널로 문의 주세요.' },
+  { q: '증명사진 배경 색상 선택이 가능한가요?', a: '네, 취업용·여권용·비자용 등 필요에 따라 배경 색상을 선택하실 수 있습니다.' },
+  { q: '결과물이 마음에 들지 않으면 어떻게 하나요?', a: '보정 결과물을 받으신 후 수정 사항이 있으시면 카카오채널로 말씀해 주세요. 1회 수정까지 무료로 도와드립니다.' },
+  { q: '단체 촬영도 가능한가요?', a: '네, 가족·동아리·회사·스터디 등 단체 촬영도 가능합니다.\n20명이 넘은 다수 인원은 지하 1층 대형호리존에서 촬영가능하니 사전에 카카오채널로 문의 주시기 바랍니다.' }];
+
+  return (
+    <div style={{ paddingTop: 64, background: '#F9F7F5', minHeight: '100vh' }}>
+      <div style={{ background: '#0e0d0c', padding: '80px 80px 100px' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto' }}>
+          <Eyebrow>FAQ</Eyebrow>
+          <h1 style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 'clamp(36px,5vw,60px)', fontWeight: 900, color: '#F9F7F5', lineHeight: 1.2, letterSpacing: '-0.04em', textTransform: 'uppercase' }}>자주 묻는 질문</h1>
+        </div>
+      </div>
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '64px 80px' }}>
+        {faqs.map((faq, i) =>
+        <FadeIn key={i} delay={i * 0.04}>
+            <div style={{ borderBottom: '1px solid #E8E4E0' }}>
+              <button onClick={() => setOpen(open === i ? null : i)} style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 0', textAlign: 'left' }}>
+                <span style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 16, fontWeight: 600, color: '#1A1714', lineHeight: 1.5 }}>{faq.q}</span>
+                <span style={{ fontSize: 20, color: open === i ? '#FF3D8B' : '#9A9590', transform: open === i ? 'rotate(45deg)' : 'none', transition: 'all 0.25s', flexShrink: 0, marginLeft: 16 }}>+</span>
+              </button>
+              <div style={{ overflow: 'hidden', maxHeight: open === i ? 200 : 0, transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)', opacity: open === i ? 1 : 0 }}>
+                <div style={{ fontSize: 14, color: '#6A6560', lineHeight: 1.9, paddingBottom: 24, fontFamily: "'Pretendard',sans-serif" }}>{faq.a}</div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+      </div>
+      <div style={{ padding: '0 80px 80px', maxWidth: 960, margin: '0 auto' }}>
+        <div style={{ background: '#1A1714', borderRadius: 16, padding: '40px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 32 }}>
+          <div>
+            <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 20, fontWeight: 700, color: '#F9F7F5', marginBottom: 6 }}>더 궁금하신 점이 있으신가요?</div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>카카오채널로 편하게 문의해 주세요.</div>
+          </div>
+          <Btn variant="cta" size="md" href="http://pf.kakao.com/_xgxeIMxj/chat">카카오 상담하기</Btn>
+        </div>
+      </div>
+      <Footer setPage={setPage} />
+    </div>);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE: LOCATION
+═══════════════════════════════════════════════════════════════ */
+function LocationPage({ setPage }) {
+  return (
+    <div style={{ paddingTop: 64, background: '#0e0d0c', minHeight: '100vh' }}>
+      <div style={{ padding: '80px 80px 64px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <Eyebrow>LOCATION</Eyebrow>
+          <h1 style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 'clamp(36px,5vw,60px)', fontWeight: 900, color: '#F9F7F5', lineHeight: 1.2, letterSpacing: '-0.04em', textTransform: 'uppercase' }}>오시는 길</h1>
+        </div>
+      </div>
+      <div style={{ padding: '0 80px 80px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
+          <FadeIn>
+            <div style={{ borderRadius: 16, overflow: 'hidden', height: 420, border: '1px solid rgba(255,255,255,0.07)', position: 'relative' }}>
+              <iframe src="https://map.naver.com/p/entry/address/%EB%8C%80%EC%A0%84%EA%B4%91%EC%97%AD%EC%8B%9C%20%EC%A4%91%EA%B5%AC%20%EB%8C%80%EC%A0%84%EC%B2%9C%EC%84%9C%EB%A1%9C%20475?c=14.00,0,0,0,dh" width="100%" height="420" style={{ border: 'none' }} title="PPS 셀프사진관 위치" />
+              <div style={{ position: 'absolute', bottom: 16, right: 16 }}>
+                <a href="https://naver.me/IMyGdHlr" target="_blank" style={{ background: '#FF3D8B', color: '#fff', fontFamily: "'Pretendard',sans-serif", fontSize: 12, fontWeight: 600, padding: '8px 16px', borderRadius: 9999, textDecoration: 'none' }}>네이버로 보기 →</a>
+              </div>
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+              <div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#FF3D8B', marginBottom: 10 }}>ADDRESS</div>
+                <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 18, fontWeight: 600, color: '#F9F7F5', lineHeight: 1.6 }}>대전광역시 중구 대전천서로 475</div>
+                <div style={{ fontFamily: "'Pretendard',sans-serif", fontSize: 16, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>중앙타워빌딩 8층</div>
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.07)' }} />
+              <div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>HOURS</div>
+                {[['월~금', '10:00 – 21:00'], ['토~일', '10:00 – 21:00'], ['공휴일', '운영 여부 문의']].map(([d, h]) =>
+                <div key={d} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'Pretendard',sans-serif", fontSize: 14, marginBottom: 10 }}>
+                    <span style={{ color: 'rgba(255,255,255,0.4)' }}>{d}</span>
+                    <span style={{ color: '#F9F7F5' }}>{h}</span>
+                  </div>
+                )}
+              </div>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.07)' }} />
+              <div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>교통 안내</div>
+                {[['지하철', '대전 1호선 중앙로역 도보 5분'], ['버스', '대전천서로 정류장 하차'], ['주차', '빌딩 내 주차 가능 (문의 필요)']].map(([m, d]) =>
+                <div key={m} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', marginBottom: 12 }}>
+                    <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 600, color: '#00BFFF', minWidth: 36 }}>{m}</span>
+                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', fontFamily: "'Pretendard',sans-serif", lineHeight: 1.6 }}>{d}</span>
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Btn variant="cta" size="md" href="https://naver.me/IMyGdHlr">예약하기</Btn>
+                <Btn variant="primary" size="md" href="http://pf.kakao.com/_xgxeIMxj/chat">문의하기</Btn>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </div>
+      <Footer setPage={setPage} />
+    </div>);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   APP ROOT
+═══════════════════════════════════════════════════════════════ */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{ "accentColor": "#FF3D8B", "heroBg": "#0e0d0c", "sectionBg": "#F9F7F5" } /*EDITMODE-END*/;
+
+function App() {
+  const [page, setPage] = useState(() => localStorage.getItem('pps_page') || 'home');
+  const [showTweaks, setShowTweaks] = useState(false);
+
+  useEffect(() => {localStorage.setItem('pps_page', page);}, [page]);
+  useEffect(() => {window.scrollTo({ top: 0, behavior: 'instant' });}, [page]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const pages = { home: HomePage, portfolio: PortfolioPage, guide: GuidePage, pricing: PricingPage, faq: FAQPage, location: LocationPage };
+  const Page = pages[page] || HomePage;
+
+  return (
+    <div>
+      <Nav activePage={page} setPage={setPage} />
+      <Page setPage={setPage} />
+      <FloatingContact />
+      {showTweaks &&
+      <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 500, background: 'rgba(20,18,16,0.97)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: '20px 24px', width: 220, backdropFilter: 'blur(16px)' }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Tweaks</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {Object.keys(pages).map((p) =>
+          <button key={p} onClick={() => setPage(p)} style={{ background: page === p ? '#FF3D8B' : 'rgba(255,255,255,0.06)', color: '#fff', border: 'none', borderRadius: 6, padding: '7px 10px', fontSize: 12, cursor: 'pointer', textAlign: 'left', fontFamily: "'Pretendard',sans-serif" }}>{p}</button>
+          )}
+          </div>
+        </div>
+      }
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
