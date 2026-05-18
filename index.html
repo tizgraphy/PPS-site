@@ -24,6 +24,104 @@ a { text-decoration: none; }
 .fade-2 { animation: fadeUp 0.9s 0.28s cubic-bezier(0.16,1,0.3,1) both; }
 .fade-3 { animation: fadeUp 0.9s 0.44s cubic-bezier(0.16,1,0.3,1) both; }
 .fade-4 { animation: fadeUp 0.9s 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE — < 768px
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Section padding — 80px → 20px */
+  section { padding-left: 20px !important; padding-right: 20px !important; }
+
+  /* Big section paddings — 120/100/80 vertical → 60 */
+  [style*="padding:'120px 80px"], [style*="padding: '120px 80px"],
+  [style*="padding:'100px 80px"], [style*="padding: '100px 80px"],
+  [style*="padding:'80px 80px"], [style*="padding: '80px 80px"] {
+    padding: 60px 20px !important;
+  }
+  [style*="padding:'100px 0 0'"], [style*="padding: '100px 0 0'"] { padding: 60px 0 0 !important; }
+  [style*="padding:'80px 80px 64px'"], [style*="padding: '80px 80px 64px'"],
+  [style*="padding:'80px 80px 48px'"], [style*="padding: '80px 80px 48px'"],
+  [style*="padding:'80px 80px 100px'"], [style*="padding: '80px 80px 100px'"] {
+    padding: 60px 20px 40px !important;
+  }
+  [style*="padding:'0 80px 80px'"], [style*="padding: '0 80px 80px'"],
+  [style*="padding:'0 80px 64px'"], [style*="padding: '0 80px 64px'"] {
+    padding: 0 20px 40px !important;
+  }
+  [style*="padding:'0 80px 32px'"], [style*="padding: '0 80px 32px'"] { padding: 0 20px 24px !important; }
+  [style*="padding:'48px 80px 80px'"], [style*="padding: '48px 80px 80px'"],
+  [style*="padding:'48px 80px 72px'"], [style*="padding: '48px 80px 72px'"],
+  [style*="padding:'56px 80px 72px'"], [style*="padding: '56px 80px 72px'"],
+  [style*="padding:'64px 80px'"], [style*="padding: '64px 80px'"] {
+    padding: 40px 20px !important;
+  }
+  [style*="padding:'120px 80px 80px'"], [style*="padding: '120px 80px 80px'"] {
+    padding: 100px 20px 40px !important;
+  }
+  [style*="padding:'80px 64px'"], [style*="padding: '80px 64px'"] {
+    padding: 60px 20px !important;
+  }
+
+  /* Grids — 3-col/4-col → 1-col, 2-col → 1-col */
+  [style*="repeat(3,1fr)"], [style*="repeat(3, 1fr)"] { grid-template-columns: 1fr !important; }
+  [style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
+  [style*="gridTemplateColumns:'1fr 1fr'"], [style*="gridTemplateColumns: '1fr 1fr'"],
+  [style*="gridTemplateColumns:'1fr auto'"], [style*="gridTemplateColumns: '1fr auto'"],
+  [style*="gridTemplateColumns:'200px 1fr'"], [style*="gridTemplateColumns: '200px 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="gridTemplateColumns:'1fr 380px'"], [style*="gridTemplateColumns: '1fr 380px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce grid gaps */
+  [style*="gap:80"], [style*="gap: 80"] { gap: 32px !important; }
+  [style*="gap:64"], [style*="gap: 64"] { gap: 28px !important; }
+  [style*="gap:48"], [style*="gap: 48"] { gap: 24px !important; }
+
+  /* Hero — hide absolute photo collage */
+  section .fade-4[style*="position:'absolute'"], section .fade-4[style*="position: 'absolute'"] { display: none !important; }
+
+  /* Instagram grid — keep 3 cols but smaller, set to 2 */
+  [style*="gridTemplateColumns:'repeat(4,1fr)'"][style*="gap:3"],
+  [style*="gridTemplateColumns: 'repeat(4,1fr)'"][style*="gap: 3"] {
+    grid-template-columns: repeat(3,1fr) !important;
+  }
+
+  /* Buttons — full width stacking */
+  [style*="flexWrap:'wrap'"], [style*="flexWrap: 'wrap'"] { width: 100% !important; }
+
+  /* Top nav links — hide normal links, show hamburger */
+  nav .nav-links-desktop { display: none !important; }
+  nav .nav-mobile-toggle { display: flex !important; }
+
+  /* Footer 3-col → 1-col */
+  footer [style*="repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+
+  /* Marquee / Flip board — smaller text */
+  .flipboard-row { font-size: 11px !important; }
+
+  /* Floating contact — smaller */
+  .floating-contact { bottom: 16px !important; right: 16px !important; }
+
+  /* Image collage in guide page */
+  [style*="gridTemplateRows:'1fr 1fr'"] { grid-template-rows: auto !important; }
+
+  /* Pricing calculator stack */
+  .price-calc-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+
+  /* CTA banner big text — shrink */
+  /* clamp() values handle most cases automatically */
+}
+
+@media (max-width: 480px) {
+  /* Even smaller phones */
+  section { padding-left: 16px !important; padding-right: 16px !important; }
+  [style*="padding:'120px 80px 80px'"], [style*="padding: '120px 80px 80px'"] {
+    padding: 96px 16px 32px !important;
+  }
+  /* Hide some quick preset buttons in calculator */
+}
 </style>
 </head>
 <body>
