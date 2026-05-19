@@ -41,15 +41,15 @@ function PriceCalculator() {
   const pkg = getPkgLabel(count);
 
   return (
-    <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 80px 48px' }}>
-      <div style={{
+    <div className="pps-calc-wrap" style={{ maxWidth:1200, margin:'0 auto', padding:'0 80px 48px' }}>
+      <div className="pps-calc-card" style={{
         background:'linear-gradient(135deg,rgba(255,61,139,0.08) 0%,rgba(0,191,255,0.05) 100%)',
         border:'1px solid rgba(255,61,139,0.2)', borderRadius:24, padding:'48px 48px',
         position:'relative', overflow:'hidden',
       }}>
         <div style={{ position:'absolute', top:-40, right:-40, width:200, height:200, borderRadius:'50%', background:'rgba(255,61,139,0.07)', filter:'blur(60px)', pointerEvents:'none' }} />
 
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:48, alignItems:'center', position:'relative' }}>
+        <div className="pps-calc-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:48, alignItems:'center', position:'relative' }}>
 
           {/* ── LEFT: input ── */}
           <div>
