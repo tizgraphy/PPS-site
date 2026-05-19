@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="format-detection" content="telephone=no">
 <title>PPS 셀프사진관 — 대전 셀프스튜디오</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
@@ -12,7 +13,8 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { background: #0e0d0c; font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; -webkit-font-smoothing: antialiased; word-break: keep-all; text-wrap: pretty; color: #F9F7F5; overflow-x: hidden; }
+body { background: #0e0d0c; font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; -webkit-font-smoothing: antialiased; word-break: keep-all; text-wrap: pretty; color: #F9F7F5; overflow-x: hidden; max-width: 100vw; }
+html { overflow-x: hidden; max-width: 100vw; }
 * { scrollbar-width: thin; scrollbar-color: #2a2724 transparent; }
 a { text-decoration: none; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
@@ -207,13 +209,51 @@ a { text-decoration: none; }
   }
 }
 
-@media (max-width: 480px) {
-  div[style*="padding: 120px 80px 80px"] { padding: 88px 14px 32px !important; }
-  section { padding-left: 14px !important; padding-right: 14px !important; }
+@media (max-width: 768px) {
+  /* Prevent any element from overflowing horizontally */
+  body, #root, section, footer, nav { max-width: 100vw; overflow-x: hidden; }
+  img, iframe, video { max-width: 100% !important; }
 
-  /* Even smaller for very tight phones */
-  h1[style*="clamp(52px,7vw,96px)"], h2[style*="clamp(52px,7vw,96px)"],
-  div[style*="clamp(52px,7vw,96px)"] { font-size: 40px !important; }
+  /* Package cards — 2 columns on mobile instead of 1 */
+  div[style*="grid-template-columns: repeat(3, 1fr)"][style*="gap: 16"],
+  div[style*="grid-template-columns: repeat(3,1fr)"][style*="gap: 16"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  /* Package card inner padding — smaller for 2-col on phone */
+  div[style*="padding: 36px 32px"] { padding: 18px 14px !important; }
+
+  /* Package card text — smaller for 2-col fit */
+  div[style*="padding: 36px 32px"] div[style*="font-size: 20px"] { font-size: 14px !important; }
+  div[style*="padding: 36px 32px"] div[style*="font-size: 42px"] { font-size: 26px !important; }
+  div[style*="padding: 36px 32px"] span[style*="font-size: 13px"] { font-size: 11px !important; }
+  div[style*="padding: 36px 32px"] button { font-size: 11px !important; padding: 10px 12px !important; }
+
+  /* Pricing calculator card → stack inputs/results */
+  div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 48px"] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  /* Calculator container padding */
+  div[style*="background: linear-gradient(135deg,rgba(255,61,139,0.08)"][style*="border-radius: 24px"] {
+    padding: 22px 16px !important;
+    border-radius: 16px !important;
+  }
+  /* Calculator stepper — keep small */
+  div[style*="display: flex"][style*="align-items: center"][style*="margin-bottom: 24"] button[style*="width: 52px"] {
+    width: 44px !important; height: 44px !important;
+  }
+  div[style*="display: flex"][style*="align-items: center"][style*="margin-bottom: 24"] input { font-size: 22px !important; height: 44px !important; }
+
+  /* Calculator result box */
+  div[style*="background: rgba(0,0,0,0.3)"][style*="border-radius: 20px"] {
+    padding: 22px 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* For very tight phones — keep 2-col packages but even smaller padding */
+  div[style*="padding: 36px 32px"] { padding: 14px 10px !important; }
 }
 </style>
 </head>
