@@ -19,18 +19,11 @@ window.Logo = function Logo({ dark = false, size = 'md' }) {
 window.Nav = function Nav({ activePage, setPage }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
-    const onResize = () => setIsMobile(window.innerWidth <= 768);
-    onResize();
     window.addEventListener('scroll', onScroll);
-    window.addEventListener('resize', onResize);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-    };
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const links = [
@@ -46,65 +39,62 @@ window.Nav = function Nav({ activePage, setPage }) {
 
   return (
     <React.Fragment>
-      <nav style={{
+      <nav className="pps-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
         background: scrolled || menuOpen ? 'rgba(14,13,12,0.96)' : 'transparent',
         backdropFilter: scrolled || menuOpen ? 'blur(16px)' : 'none',
         borderBottom: scrolled || menuOpen ? '1px solid rgba(255,255,255,0.07)' : 'none',
         height: 64, display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
-        padding: isMobile ? '0 20px' : '0 48px',
         transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
       }}>
         <div style={{ cursor: 'pointer' }} onClick={() => goto('home')}>
           <Logo dark size="md" />
         </div>
 
-        {!isMobile && (
-          <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-            {links.map(l => (
-              <span key={l.key} onClick={() => setPage(l.key)} style={{
-                fontFamily: "'Pretendard', sans-serif",
-                fontSize: 13, fontWeight: activePage === l.key ? 600 : 400,
-                color: activePage === l.key ? '#FF3D8B' : 'rgba(255,255,255,0.75)',
-                cursor: 'pointer', transition: 'color 0.2s', letterSpacing: '0.01em',
-              }}>{l.label}</span>
-            ))}
-            <button onClick={() => window.open('https://naver.me/IMyGdHlr', '_blank')} style={{
-              background: '#FF3D8B', color: '#fff', border: 'none',
-              borderRadius: 9999, padding: '9px 24px',
-              fontFamily: "'Pretendard', sans-serif", fontSize: 13, fontWeight: 600,
-              cursor: 'pointer', boxShadow: '0 0 20px rgba(255,61,139,0.4)',
-              transition: 'all 0.2s', letterSpacing: '0.02em',
-            }}>예약하기</button>
-          </div>
-        )}
+        {/* DESKTOP nav links — hidden on mobile via CSS */}
+        <div className="pps-nav-desktop" style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
+          {links.map(l => (
+            <span key={l.key} onClick={() => setPage(l.key)} style={{
+              fontFamily: "'Pretendard', sans-serif",
+              fontSize: 13, fontWeight: activePage === l.key ? 600 : 400,
+              color: activePage === l.key ? '#FF3D8B' : 'rgba(255,255,255,0.75)',
+              cursor: 'pointer', transition: 'color 0.2s', letterSpacing: '0.01em',
+            }}>{l.label}</span>
+          ))}
+          <button onClick={() => window.open('https://naver.me/IMyGdHlr', '_blank')} style={{
+            background: '#FF3D8B', color: '#fff', border: 'none',
+            borderRadius: 9999, padding: '9px 24px',
+            fontFamily: "'Pretendard', sans-serif", fontSize: 13, fontWeight: 600,
+            cursor: 'pointer', boxShadow: '0 0 20px rgba(255,61,139,0.4)',
+            transition: 'all 0.2s', letterSpacing: '0.02em',
+          }}>예약하기</button>
+        </div>
 
-        {isMobile && (
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 10, width: 44, height: 38, display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', padding: 0,
-          }}>
-            <div style={{ width: 18, display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, transform: menuOpen ? 'rotate(45deg) translate(4px,4px)' : 'none', transition: 'all 0.25s' }} />
-              <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, opacity: menuOpen ? 0 : 1, transition: 'all 0.2s' }} />
-              <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, transform: menuOpen ? 'rotate(-45deg) translate(4px,-4px)' : 'none', transition: 'all 0.25s' }} />
-            </div>
-          </button>
-        )}
+        {/* MOBILE hamburger — hidden on desktop via CSS */}
+        <button className="pps-nav-burger" onClick={() => setMenuOpen(!menuOpen)} aria-label="menu" style={{
+          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 10, width: 44, height: 38,
+          alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', padding: 0, flexShrink: 0,
+        }}>
+          <div style={{ width: 18, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, transform: menuOpen ? 'rotate(45deg) translate(4px,4px)' : 'none', transition: 'all 0.25s' }} />
+            <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, opacity: menuOpen ? 0 : 1, transition: 'all 0.2s' }} />
+            <span style={{ height: 2, background: '#F9F7F5', borderRadius: 2, transform: menuOpen ? 'rotate(-45deg) translate(4px,-4px)' : 'none', transition: 'all 0.25s' }} />
+          </div>
+        </button>
       </nav>
 
       {/* Mobile drawer */}
-      {isMobile && menuOpen && (
-        <div style={{
+      {menuOpen && (
+        <div className="pps-nav-drawer" style={{
           position: 'fixed', top: 64, left: 0, right: 0, bottom: 0, zIndex: 199,
           background: 'rgba(14,13,12,0.98)', backdropFilter: 'blur(20px)',
-          padding: '32px 24px',
+          padding: '32px 20px', overflowY: 'auto',
           animation: 'fadeUp 0.3s cubic-bezier(0.16,1,0.3,1) both',
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {links.map((l, i) => (
               <div key={l.key} onClick={() => goto(l.key)} style={{
                 padding: '20px 4px', borderBottom: '1px solid rgba(255,255,255,0.07)',
@@ -122,7 +112,7 @@ window.Nav = function Nav({ activePage, setPage }) {
             ))}
           </div>
           <button onClick={() => { window.open('https://naver.me/IMyGdHlr', '_blank'); setMenuOpen(false); }} style={{
-            marginTop: 32, width: '100%',
+            marginTop: 28, width: '100%',
             background: '#FF3D8B', color: '#fff', border: 'none',
             borderRadius: 14, padding: '18px 24px',
             fontFamily: "'Pretendard', sans-serif", fontSize: 16, fontWeight: 800,
@@ -137,9 +127,6 @@ window.Nav = function Nav({ activePage, setPage }) {
             fontFamily: "'Pretendard', sans-serif", fontSize: 14, fontWeight: 700,
             textDecoration: 'none', letterSpacing: '-0.01em',
           }}>💬 카카오 상담하기</a>
-          <div style={{ marginTop: 32, fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-            대전 중구 · 중앙타워빌딩 8F<br/>10:00 – 21:00
-          </div>
         </div>
       )}
     </React.Fragment>

@@ -26,11 +26,24 @@ a { text-decoration: none; }
 .fade-4 { animation: fadeUp 0.9s 0.6s cubic-bezier(0.16,1,0.3,1) both; }
 
 /* ═══════════════════════════════════════════════════════════════
+   NAV — responsive (desktop vs mobile hamburger)
+═══════════════════════════════════════════════════════════════ */
+.pps-nav { padding: 0 48px; }
+.pps-nav-desktop { display: flex; }
+.pps-nav-burger { display: none; }
+
+@media (max-width: 900px) {
+  .pps-nav { padding: 0 20px; }
+  .pps-nav-desktop { display: none !important; }
+  .pps-nav-burger { display: flex !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MOBILE — ≤ 768px
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   /* All sections — kill horizontal padding */
-  section, footer { padding-left: 20px !important; padding-right: 20px !important; }
+  section, footer { padding-left: 16px !important; padding-right: 16px !important; }
 
   /* Big container paddings — collapse */
   div[style*="padding: 120px 80px 80px"] { padding: 96px 16px 40px !important; }
@@ -51,92 +64,92 @@ a { text-decoration: none; }
   div[style*="padding: 48px 80px"]    { padding: 32px 16px !important; }
   div[style*="padding: 56px 80px 72px"] { padding: 40px 16px 40px !important; }
   div[style*="padding: 64px 80px"]    { padding: 40px 16px !important; }
-  div[style*="padding: 36px 28px"]    { padding: 24px 20px !important; }
-  div[style*="padding: 48px 48px"]    { padding: 28px 20px !important; }
-  div[style*="padding: 40px 48px"]    { padding: 28px 20px !important; }
+  div[style*="padding: 36px 28px"]    { padding: 24px 18px !important; }
+  div[style*="padding: 48px 48px"]    { padding: 24px 18px !important; }
+  div[style*="padding: 40px 48px"]    { padding: 24px 18px !important; }
+  div[style*="padding: 32px 36px"]    { padding: 22px 18px !important; }
+  div[style*="padding: 20px 24px"]    { padding: 16px 18px !important; }
 
-  /* Grids — collapse multi-column to single column */
+  /* Grids — collapse to single column */
   div[style*="grid-template-columns: repeat(3, 1fr)"],
   div[style*="grid-template-columns: repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
-
   div[style*="grid-template-columns: repeat(4, 1fr)"],
   div[style*="grid-template-columns: repeat(4,1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
-
   div[style*="grid-template-columns: 1fr 1fr"]     { grid-template-columns: 1fr !important; }
   div[style*="grid-template-columns: 1fr auto"]    { grid-template-columns: 1fr !important; }
   div[style*="grid-template-columns: 200px 1fr"]   { grid-template-columns: 1fr !important; }
   div[style*="grid-template-columns: 1fr 380px"]   { grid-template-columns: 1fr !important; }
 
   /* Gap reductions */
-  div[style*="gap: 80px"], div[style*="gap: 80"] { gap: 32px !important; }
-  div[style*="gap: 64px"], div[style*="gap: 64"] { gap: 28px !important; }
-  div[style*="gap: 48px"], div[style*="gap: 48"] { gap: 24px !important; }
-  div[style*="gap: 40px"], div[style*="gap: 40"] { gap: 24px !important; }
+  div[style*="gap: 80px"], div[style*="gap: 80"] { gap: 28px !important; }
+  div[style*="gap: 64px"], div[style*="gap: 64"] { gap: 24px !important; }
+  div[style*="gap: 48px"], div[style*="gap: 48"] { gap: 20px !important; }
+  div[style*="gap: 40px"], div[style*="gap: 40"] { gap: 20px !important; }
+  div[style*="gap: 36px"], div[style*="gap: 36"] { gap: 18px !important; }
+  div[style*="gap: 32px"], div[style*="gap: 32"] { gap: 16px !important; }
+  div[style*="gap: 28px"], div[style*="gap: 28"] { gap: 14px !important; }
 
   /* Hide PC-only absolute hero collage */
   section > div[style*="position: absolute"][style*="right: 80px"][style*="top: 50%"] {
     display: none !important;
   }
 
-  /* Pricing notes 2-col → 1-col */
-  div[style*="grid-template-columns: 1fr 1fr"][style*="margin: 24px auto 0"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Stat strip in CTA — keep 3 cols but reduce spacing & font */
+  /* Stat strip in CTA — 3 cols to 1 col */
   div[style*="border-top: 1px solid rgba(255,255,255,0.08)"][style*="grid-template-columns: repeat(3"] {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    gap: 14px !important;
   }
-
-  /* CTA right column buttons — when stacked, make full width */
   div[style*="min-width: 240px"] { min-width: 0 !important; width: 100% !important; }
 
-  /* HOW IT WORKS 4-col → 2x2 — already covered by repeat(4) → repeat(2) */
-
-  /* Big editorial headlines — make slightly smaller */
+  /* Big editorial headlines — make smaller */
   h1[style*="clamp(52px,7vw,96px)"], h2[style*="clamp(52px,7vw,96px)"],
-  div[style*="clamp(52px,7vw,96px)"] {
-    font-size: 56px !important;
-    line-height: 0.95 !important;
-  }
+  div[style*="clamp(52px,7vw,96px)"] { font-size: 48px !important; line-height: 0.95 !important; }
   h1[style*="clamp(44px,5.5vw,80px)"], h2[style*="clamp(44px,5.5vw,80px)"],
-  div[style*="clamp(44px,5.5vw,80px)"] {
-    font-size: 44px !important;
-  }
+  div[style*="clamp(44px,5.5vw,80px)"] { font-size: 42px !important; }
   h1[style*="clamp(40px,6vw,80px)"], h2[style*="clamp(40px,6vw,80px)"],
-  div[style*="clamp(40px,6vw,80px)"] {
-    font-size: 48px !important;
-  }
+  div[style*="clamp(40px,6vw,80px)"] { font-size: 44px !important; }
   h1[style*="clamp(36px,5vw,64px)"], h2[style*="clamp(36px,5vw,64px)"],
-  div[style*="clamp(36px,5vw,64px)"] {
-    font-size: 42px !important;
-  }
+  div[style*="clamp(36px,5vw,64px)"] { font-size: 36px !important; }
   h1[style*="clamp(36px,5vw,60px)"], h2[style*="clamp(36px,5vw,60px)"],
-  div[style*="clamp(36px,5vw,60px)"] {
-    font-size: 40px !important;
+  div[style*="clamp(36px,5vw,60px)"] { font-size: 36px !important; }
+  div[style*="clamp(32px,4.5vw,58px)"] { font-size: 32px !important; }
+  div[style*="clamp(28px,4vw,52px)"] { font-size: 28px !important; }
+  div[style*="clamp(28px,4vw,48px)"] { font-size: 28px !important; }
+  div[style*="clamp(28px,3vw,40px)"] { font-size: 24px !important; }
+
+  /* Big number prefixes — smaller */
+  div[style*="font-size: 80px"][style*="font-weight: 200"] { font-size: 48px !important; }
+  div[style*="font-size: 56px"][style*="font-weight: 200"] { font-size: 36px !important; }
+
+  /* Stat numbers — smaller */
+  div[style*="font-size: 48px"][style*="font-weight: 300"] { font-size: 32px !important; }
+  div[style*="font-size: 42px"][style*="font-weight: 300"] { font-size: 30px !important; }
+  div[style*="font-size: 36px"][style*="font-weight: 300"] { font-size: 26px !important; }
+
+  /* Step cards in portfolio: icon row + content row stacks vertically */
+  div[style*="background: rgba(255,61,139,0.09)"][style*="border-radius: 14px"][style*="padding: 20px 24px"],
+  div[style*="background: linear-gradient(135deg,rgba(0,191,255,0.10) 0%,rgba(255,61,139,0.06) 100%)"][style*="border-radius: 14px"][style*="padding: 20px 24px"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
   }
-  div[style*="clamp(28px,4vw,52px)"] { font-size: 32px !important; }
-  div[style*="clamp(28px,4vw,48px)"] { font-size: 30px !important; }
-  div[style*="clamp(28px,3vw,40px)"] { font-size: 26px !important; }
 
-  /* Big number prefixes (01, 02 …) — smaller */
-  div[style*="font-size: 80px"][style*="font-weight: 200"] { font-size: 56px !important; }
-  div[style*="font-size: 56px"][style*="font-weight: 200"] { font-size: 40px !important; }
-
-  /* Big stat numbers — smaller */
-  div[style*="font-size: 42px"][style*="font-weight: 300"] { font-size: 32px !important; }
-  div[style*="font-size: 48px"][style*="font-weight: 300"] { font-size: 36px !important; }
-  div[style*="font-size: 36px"][style*="font-weight: 300"] { font-size: 28px !important; }
-
-  /* Portfolio profile header — wrap & shrink */
+  /* Portfolio profile header — center wrap */
   div[style*="gap: 24px"][style*="align-items: center"][style*="margin-bottom: 40px"] {
     flex-wrap: wrap !important;
-    gap: 16px !important;
+    gap: 14px !important;
+    justify-content: flex-start !important;
   }
-  div[style*="gap: 24px"][style*="align-items: center"][style*="margin-bottom: 40px"] > div[style*="width: 80px"] {
-    width: 64px !important; height: 64px !important;
+  div[style*="gap: 24px"][style*="align-items: center"][style*="margin-bottom: 40px"] > div[style*="width: 80px"][style*="height: 80px"] {
+    width: 56px !important; height: 56px !important;
   }
+  /* Portfolio: hide the right-side @pps_studio_ inline link on mobile (avoid overflow) */
+  div[style*="display: flex"][style*="align-items: flex-start"][style*="justify-content: space-between"][style*="margin-bottom: 40px"] > a[href*="instagram"] {
+    display: none !important;
+  }
+
+  /* Stats follower row — wrap & shrink */
+  div[style*="display: flex"][style*="gap: 32px"][style*="margin-bottom: 8px"] { gap: 18px !important; }
 
   /* Tabs row — allow scroll */
   div[style*="border-bottom: 1px solid rgba(255,255,255,0.07)"] > div[style*="max-width: 1200px"][style*="display: flex"] {
@@ -144,46 +157,63 @@ a { text-decoration: none; }
     flex-wrap: nowrap !important;
   }
 
-  /* Floating contact — smaller, transparent backdrop */
+  /* Floating contact — smaller */
   div[style*="position: fixed"][style*="bottom: 28px"][style*="right: 28px"] {
     bottom: 16px !important;
     right: 16px !important;
     gap: 6px !important;
   }
   div[style*="position: fixed"][style*="bottom: 28px"][style*="right: 28px"] a {
-    width: 40px !important; height: 40px !important; padding: 8px !important;
+    padding: 8px !important;
   }
 
   /* Reduce margins */
-  div[style*="margin-bottom: 64px"] { margin-bottom: 32px !important; }
-  div[style*="margin-bottom: 48px"] { margin-bottom: 28px !important; }
-  div[style*="margin-bottom: 40px"] { margin-bottom: 24px !important; }
+  div[style*="margin-bottom: 64px"] { margin-bottom: 28px !important; }
+  div[style*="margin-bottom: 48px"] { margin-bottom: 24px !important; }
+  div[style*="margin-bottom: 40px"] { margin-bottom: 20px !important; }
+  div[style*="margin-bottom: 32px"] { margin-bottom: 18px !important; }
 
   /* Min heights — relax */
   div[style*="min-height: 280px"] { min-height: 180px !important; }
   div[style*="min-height: 180px"] { min-height: auto !important; }
   div[style*="min-height: 480px"] { min-height: auto !important; }
 
-  /* Steps step number font weight — increase visual hierarchy on small */
-  div[style*="font-size: 40px"][style*="font-weight: 200"] { font-size: 32px !important; }
-  div[style*="font-size: 32px"][style*="font-weight: 200"] { font-size: 28px !important; }
+  /* HOW IT WORKS bottom strip — stack vertically */
+  div[style*="border-top: 2px solid #1A1714"][style*="padding-top: 24px"] {
+    flex-wrap: wrap !important;
+    gap: 14px !important;
+  }
 
-  /* Flip board — hide the dot indicator on mobile, simpler */
+  /* Step prefix font weight — smaller */
+  div[style*="font-size: 40px"][style*="font-weight: 200"] { font-size: 28px !important; }
+  div[style*="font-size: 32px"][style*="font-weight: 200"] { font-size: 24px !important; }
+
+  /* Flip board — hide dot indicator on mobile */
   div[style*="background: #0c0b09"] > div > div[style*="padding: 16px 24px"][style*="gap: 6px"] {
     display: none !important;
   }
   div[style*="background: #0c0b09"] > div > div[style*="padding: 12px 28px"] {
-    padding: 10px 16px !important;
+    padding: 10px 14px !important;
     font-size: 11px !important;
   }
   div[style*="background: #0c0b09"] > div > div[style*="padding: 16px 20px"] {
-    padding: 12px 14px !important;
+    padding: 12px 12px !important;
+  }
+
+  /* Price calculator — single column */
+  div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 48px"][style*="align-items: center"] {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
   }
 }
 
 @media (max-width: 480px) {
   div[style*="padding: 120px 80px 80px"] { padding: 88px 14px 32px !important; }
   section { padding-left: 14px !important; padding-right: 14px !important; }
+
+  /* Even smaller for very tight phones */
+  h1[style*="clamp(52px,7vw,96px)"], h2[style*="clamp(52px,7vw,96px)"],
+  div[style*="clamp(52px,7vw,96px)"] { font-size: 40px !important; }
 }
 </style>
 </head>
