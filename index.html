@@ -1349,11 +1349,10 @@ function LocationPage({ setPage }) {
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{ "accentColor": "#FF3D8B", "heroBg": "#0e0d0c", "sectionBg": "#F9F7F5" } /*EDITMODE-END*/;
 
 function App() {
-  const [page, setPage] = useState(() => localStorage.getItem('pps_page') || 'home');
+  const [page, setPage] = useState('home');
   const [showTweaks, setShowTweaks] = useState(false);
 
-  useEffect(() => {localStorage.setItem('pps_page', page);}, [page]);
-  useEffect(() => {window.scrollTo({ top: 0, behavior: 'instant' });}, [page]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [page]);
 
   useEffect(() => {
     const handler = (e) => {
