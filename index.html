@@ -323,10 +323,23 @@ a { text-decoration: none; }
   }
 }
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO HEADER — hide overlapping @pps_studio_ link on mobile
+   PORTFOLIO HEADER — stack vertically on mobile, full-width cards
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .pps-portfolio-head > a[href*="instagram"] { display: none !important; }
+  .pps-portfolio-head {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  /* Hide the @pps_studio_ link in the right column on mobile */
+  .pps-portfolio-head > div:last-child,
+  .pps-portfolio-head a[href*="instagram"] {
+    display: none !important;
+  }
+  /* Step wrapper now full width (parent FadeIn is full width too) */
+  .pps-step-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
 }
 </style>
 </head>
