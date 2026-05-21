@@ -293,14 +293,17 @@ a { text-decoration: none; }
    PORTFOLIO STEP CARDS — wide cards, tight icon, full text
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Parent section — remove all horizontal padding to give cards full width */
   .pps-portfolio-head {
     flex-direction: column !important;
     gap: 16px !important;
     margin-bottom: 24px !important;
+    width: 100% !important;
   }
   .pps-portfolio-head > div:last-child,
   .pps-portfolio-head a[href*="instagram"] { display: none !important; }
+
+  /* Force FadeIn inside header to full width */
+  .pps-portfolio-head > div { width: 100% !important; max-width: 100% !important; }
 
   .pps-step-wrap {
     display: flex !important;
@@ -309,50 +312,51 @@ a { text-decoration: none; }
     gap: 10px !important;
     max-width: 100% !important;
     width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
   .pps-step-card {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 12px !important;
-    padding: 16px 16px !important;
+    padding: 16px 14px !important;
     width: 100% !important;
     min-width: 0 !important;
+    box-sizing: border-box !important;
   }
-  /* Icon column — compact, never grow */
+  /* Icon column — compact */
   .pps-step-card > div:first-child {
     width: auto !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
+    flex: 0 0 auto !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 6px !important;
   }
-  /* Icon inside — smaller */
   .pps-step-card > div:first-child > div:first-child > div:first-child {
     width: 24px !important; height: 24px !important;
   }
-  /* STEP label — smaller */
   .pps-step-card > div:first-child > div:first-child > span {
     font-size: 8px !important;
     letter-spacing: 0.1em !important;
   }
-  /* Hide redundant STEP label below icon (it appears alongside) */
-  /* Text column — gets all remaining space */
+  /* Text column — fill remaining */
   .pps-step-card > div:last-child {
-    flex: 1 1 auto !important;
+    flex: 1 1 0 !important;
     min-width: 0 !important;
   }
   .pps-step-card > div:last-child > div:first-child {
-    font-size: 16px !important;
+    font-size: 15px !important;
     line-height: 1.3 !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
+    white-space: normal !important;
+    word-break: keep-all !important;
   }
   .pps-step-card > div:last-child > div:last-child {
-    font-size: 12px !important;
-    line-height: 1.65 !important;
+    font-size: 11.5px !important;
+    line-height: 1.6 !important;
+    word-break: keep-all !important;
   }
-  /* Hide any <br> in description so text flows naturally */
   .pps-step-card > div:last-child br { display: none !important; }
 }
 /* ═══════════════════════════════════════════════════════════════
