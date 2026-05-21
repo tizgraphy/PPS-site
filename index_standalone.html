@@ -290,31 +290,30 @@ a { text-decoration: none; }
   .pps-cta-help-btns a { flex: 1 1 calc(50% - 6px) !important; justify-content: center !important; min-width: 0 !important; }
 }
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO STEP CARDS — wide cards, tight icon, full text
+   PORTFOLIO STEP CARDS — full bleed on mobile (nuclear override)
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .pps-portfolio-head {
+  /* Force every parent of the cards to full width */
+  .pps-portfolio-head,
+  .pps-portfolio-head > div,
+  .pps-portfolio-head > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 16px !important;
-    margin-bottom: 24px !important;
-    width: 100% !important;
+    justify-content: flex-start !important;
   }
   .pps-portfolio-head > div:last-child,
   .pps-portfolio-head a[href*="instagram"] { display: none !important; }
 
-  /* Force FadeIn inside header to full width */
-  .pps-portfolio-head > div { width: 100% !important; max-width: 100% !important; }
-
   .pps-step-wrap {
     display: flex !important;
     flex-direction: column !important;
-    grid-template-columns: none !important;
     gap: 10px !important;
-    max-width: 100% !important;
     width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   .pps-step-card {
     display: flex !important;
@@ -326,22 +325,20 @@ a { text-decoration: none; }
     min-width: 0 !important;
     box-sizing: border-box !important;
   }
-  /* Icon column — compact */
   .pps-step-card > div:first-child {
-    width: auto !important;
     flex: 0 0 auto !important;
+    width: auto !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 6px !important;
   }
   .pps-step-card > div:first-child > div:first-child > div:first-child {
-    width: 24px !important; height: 24px !important;
+    width: 22px !important; height: 22px !important;
   }
   .pps-step-card > div:first-child > div:first-child > span {
     font-size: 8px !important;
     letter-spacing: 0.1em !important;
   }
-  /* Text column — fill remaining */
   .pps-step-card > div:last-child {
     flex: 1 1 0 !important;
     min-width: 0 !important;
@@ -350,7 +347,6 @@ a { text-decoration: none; }
     font-size: 15px !important;
     line-height: 1.3 !important;
     margin-bottom: 4px !important;
-    white-space: normal !important;
     word-break: keep-all !important;
   }
   .pps-step-card > div:last-child > div:last-child {
